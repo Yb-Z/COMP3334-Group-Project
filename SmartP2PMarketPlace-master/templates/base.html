@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome</title>
+    {% include 'snippets/css.html' %}
+  </head>
+  <body>
+    <div class='main' style="background: url('http://i.imgur.com/oNX5MgY.jpg') no-repeat center center fixed;background-size: cover;">
+      {% include 'snippets/nav.html' %}
+      {% block content %}
+
+      {% endblock content %}
+    </div>
+
+    {% include 'snippets/footer.html'%}
+  </body>
+  {% include 'snippets/scripts.html' %}
+</html>

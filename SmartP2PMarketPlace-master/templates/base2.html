@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome</title>
+    {% include 'snippets/css.html' %}
+    <script type="text/javascript" src='https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js'></script>
+  </head>
+  <body>
+    <div class='main'>
+      <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+                <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
+                  <ul class='nav navbar-nav'>
+                    <li><a class="navbar-brand active" id='brand-name' href="/"><i class="fa fa-camera-retro" aria-hidden="true"></i> P2P MarketPlace</a></li>
+                    <li class='active'><a href="/post/">New Post <i class="fa fa-plus-circle" aria-hidden="true"></i></a></li>
+                  </ul>
+
+                </div>
+            <div id="navbar" class="navbar-collapse collapse">
+
+                  <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/feed/">Feed</a></li>
+
+                    <li> <a href="/logout/" class='nav-link'>Logout</a></li>
+                  </ul>
+            </div><!--/.nav-collapse -->
+        </div><!--/.container-fluid -->
+      </nav>
+      {% load cloudinary %}
+      {% block content %}
+
+      {% endblock content %}
+    </div>
+
+
+  </body>
+  {% include 'snippets/scripts.html' %}
+</html>

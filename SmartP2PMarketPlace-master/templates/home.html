@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+
+
+  <div class="container">
+    <h1>Sign Up!</h1>
+    <hr>
+    <form method="post">
+      {% csrf_token %}
+      <div class="error-container" id='errors'>
+          <h4 style='color: white' id='error-text'>{{ context }}</h2>
+      </div>
+
+       <div class='field'>
+           <label for="username">Username </label>
+           <input id="username" type="text" name="username" class='form-control' value={{ username }}>
+       </div>
+
+       <div class='field'>
+           <label for="name">Name </label>
+           <input id="name" type="text" name="name" value="" class='form-control' value={{ name }}>
+       </div>
+
+       <div class='field'>
+           <label for="email">Email </label>
+           <input id="email" type="text" name="email" value="" class='form-control' value={{ email }}>
+       </div>
+
+       <div class='field'>
+           <label for="password">Password </label>
+           <input id="password" type="password" name="password" value="" class='form-control' value={{ password }}>
+       </div>
+           <input type="submit" value="Sign Up" id='signup' class='btn btn-default'>
+    </form>
+
+  </div>
+</div>
+
+
+
+{% endblock content %}
