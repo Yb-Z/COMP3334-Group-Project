@@ -15,7 +15,7 @@ from marketplace.settings import BASE_DIR
 import os
 import sendgrid
 from sendgrid.helpers.mail import *
-from clarifai.rest import ClarifaiApp
+# from clarifai.rest import ClarifaiApp
 import json
 from datetime import datetime
 

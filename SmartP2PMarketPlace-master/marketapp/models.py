@@ -1,7 +1,6 @@
 
 import uuid
 from django.db import models
-import uuid
 
 class UserModel(models.Model):
     name = models.CharField(max_length=120, null=False)

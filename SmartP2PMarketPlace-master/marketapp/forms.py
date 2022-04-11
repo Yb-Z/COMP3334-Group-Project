@@ -11,7 +11,7 @@ class SignUpForm(forms.ModelForm):
         email = self.cleaned_data['email']
         if UserModel.objects.filter(email=email).exists():
             print('Email not valid')
-            return 'email exists'
+            # return 'email exists'
             raise ValidationError('Email already exists')
         return email
 
