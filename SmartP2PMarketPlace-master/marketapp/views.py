@@ -35,11 +35,9 @@ from datetime import datetime
 # Set up SendGrid
 # my_client = sendgrid.SendGridAPIClient(apikey=sendgrid_key)
 
-
 def create_payload(subject, message, email):
     from_email = "jsparrow725@gmail.com"
     from_name = "Smart P2P Marketplace"
-
     payload = {
         "personalizations": [{"to": [{"email": email}], "subject": subject}],
         "from": {"email": from_email, "name": from_name},
@@ -47,15 +45,11 @@ def create_payload(subject, message, email):
     }
     return payload
 
-
 # View to the landing page
 def landing(request):
     return render(request, "landing.html")
 
-
 # View to the home page
-
-
 def signup(request):
     today = datetime.now()
     if request.method == "POST":
@@ -111,16 +105,10 @@ def signup(request):
 
 
 # View for the login page
-
-
 def login(request):
-
     dict = {}
-
     if request.method == "POST":
-
         form = LoginForm(request.POST)
-
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
@@ -161,9 +149,7 @@ def login(request):
             )
     else:
         form = LoginForm()
-
     return render(request, "login.html")
-
 
 # Check if the current session is valid
 def check_validation(request):
@@ -175,7 +161,6 @@ def check_validation(request):
             return session.user
     else:
         return None
-
 
 # The view user has after logging in
 # def feed(request):
