@@ -80,13 +80,13 @@ def signup(request):
             # print response
 
             # Alternative
-            send_mail(
+            """send_mail(
                 "Welcome",
                 "Thanks for being a part of my Smart P2P Marketplace. You are awesome :)",
                 "smartp2pmarketplace.com",
                 [email],
                 fail_silently=False,
-            )
+            )"""
             # To prevent header injection https://docs.djangoproject.com/es/1.11/topics/email/#preventing-header-injection
             # except BadHeaderError:
             # return HttpResponse('Invalid header found'
@@ -253,13 +253,13 @@ def like(request):
                     # response = my_client.client.mail.send.post(request_body=payload)
                     # print response
                     # Alternative
-                    send_mail(
+                    """send_mail(
                         "Heyy, You got a like from " + post.user.name,
                         "Check it out at smartp2pmarketplace.com",
                         "smartp2pmarketplace.com",
                         [post.post.user.email],
                         fail_silently=False,
-                    )
+                    )"""
             return redirect("/feed/")
     else:
         return redirect("/login/")
@@ -286,13 +286,13 @@ def comment(request):
                 # payload = create_payload(subject,message,email)
                 # response = my_client.client.mail.send.post(request_body=payload)
                 # print response
-                send_mail(
+                """send_mail(
                     "Heyy, You got a comment from " + comment.user.name,
                     "Check it out at smartp2pmarketplace.com",
                     "smartp2pmarketplace.com",
                     [comment.post.user.email],
                     fail_silently=False,
-                )
+                )"""
             return redirect("/feed")
         else:
             return redirect("/feed/")

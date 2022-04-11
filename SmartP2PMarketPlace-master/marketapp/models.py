@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 
 class UserModel(models.Model):
+    id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=120, null=False)
     email = models.EmailField()
     username = models.CharField(max_length=120, unique=True)
@@ -11,6 +12,7 @@ class UserModel(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
 
 class SessionToken(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     session_token = models.CharField(max_length=120)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -20,6 +22,7 @@ class SessionToken(models.Model):
         self.session_token = uuid.uuid4()
 
 class PostModel(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     image = models.FileField(upload_to="user_images")
     image_url = models.CharField(max_length=255)
@@ -38,12 +41,14 @@ class PostModel(models.Model):
         return CommentModel.objects.filter(post=self).order_by("created_on")
 
 class LikeModel(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
 class CommentModel(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
     # likes = models.ForeignKey(LikeModel)
@@ -57,6 +62,7 @@ class CommentModel(models.Model):
         return len(UpvoteModel.objects.filter(comment=self))
 
 class UpvoteModel(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     comment = models.ForeignKey(CommentModel, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
