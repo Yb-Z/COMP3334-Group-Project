@@ -14,34 +14,21 @@ Including another URLconf
     2. Import the include() function: from django.conf.urls import url, include
     3. Add a URL to urlpatterns:  re_path(r'^blog/', include(blog_urls))
 """
-from django.conf.urls import url
-from django.urls import path, include
+from django.urls import re_path, include
 from django.contrib import admin
 import debug_toolbar
 from marketapp.views import *
 
 urlpatterns = [
-    # url(r'^admin/', admin.site.urls),
-    # url(r'^$', landing),
-    # url(r'^register/$', signup),
-    # url(r'^login/$',login),
-    # url(r'^post/$',feed),
-    # url(r'^feed/$',feed_main),
-    # url(r'^feed/(?P<username>[\w.@+-]+)$',func),
-    # url(r'^like/$',like),
-    # url(r'^upvote/',upvote),
-    # url(r'^comment/$',comment),
-    # url(r'^logout/$', logout),
-    path('admin/', admin.site.urls),
-    path('', landing),
-    path('register/', signup),
-    path('login/',login),
-    path('post/',feed),
-    path('feed/',feed_main),
-    path(r'^feed/(?P<username>[\w.@+-]+)$',func),
-    path('like/',like),
-    path('upvote/',upvote),
-    path('comment/',comment),
-    path('logout/', logout),
-    path('__debug__/', include(debug_toolbar.urls))
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^$', welcome),
+    re_path(r'^register/$', signup),
+    re_path(r'^login/$',login),
+    re_path(r'^post/$',feed),
+    re_path(r'^feed/$',feed_main),
+    re_path(r'^feed/(?P<username>[\w.@+-]+)$',func),
+    re_path(r'^like/$',like),
+    re_path(r'^upvote/',upvote),
+    re_path(r'^comment/$',comment),
+    re_path(r'^logout/$', logout)
 ]

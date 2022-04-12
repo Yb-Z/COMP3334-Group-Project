@@ -5,7 +5,7 @@
   <h1 class="mb-4">Welcome to Digital Art Platform</h1>
   <div class="row w-100 justify-content-center align-items-center">
     <div class="col-12 col-md-9 col-lg-6">
-      <form method="post" id="login" class="w-100">
+      <form method="post" id="signup" class="w-100">
         {% csrf_token %} {% if context %}
         <div class="alert alert-danger" role="alert">{{ context }}</div>
         {% endif %}
@@ -23,6 +23,39 @@
             class="form-control"
             aria-label="username input"
             aria-describedby="username-label"
+            value="{{username}}"
+          />
+        </div>
+        <div class="input-group mb-3 w-100">
+          <span
+            class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+            id="name-label"
+            >Name</span
+          >
+          <input
+            id="name"
+            type="text"
+            name="name"
+            class="form-control"
+            aria-label="name input"
+            aria-describedby="name-label"
+            value="{{name}}"
+          />
+        </div>
+        <div class="input-group mb-3 w-100">
+          <span
+            class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+            id="email-label"
+            >Email</span
+          >
+          <input
+            id="email"
+            type="text"
+            name="email"
+            class="form-control"
+            aria-label="email input"
+            aria-describedby="email-label"
+            value="{{email}}"
           />
         </div>
         <div class="input-group mb-3 w-100">
@@ -38,13 +71,14 @@
             class="form-control"
             aria-label="password input"
             aria-describedby="password-label"
+            value="{{password}}"
           />
         </div>
       </form>
     </div>
   </div>
-  <button type="submit" form="login" value="Submit" class="btn btn-primary">
-    Login
+  <button type="submit" form="signup" value="Submit" class="btn btn-primary">
+    Sign Up
   </button>
 </div>
 

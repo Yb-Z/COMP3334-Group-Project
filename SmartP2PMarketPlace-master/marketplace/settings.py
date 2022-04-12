@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'marketapp',
+    'marketplace',
     'cloudinary',
     'django_extensions',
     'debug_toolbar'
