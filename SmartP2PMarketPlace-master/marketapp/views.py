@@ -161,53 +161,52 @@ def feed(request):
     posts = PostModel.objects.all().order_by("-created_on")
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        post.has_liked = True if existing_like else False
         comments = CommentModel.objects.filter(post_id=post.id)
-        if comments:
-            if len(comments) >= 1:
-                for comment in comments:
-                    existing_upvote = UpvoteModel.objects.filter(
-                        comment=comment.id
-                    ).first()
-                    print(existing_upvote)
-                    if existing_upvote:
-                        comment.has_upvoted = True
-        # If user has liked the post set the boolean value to True
-        if existing_like:
-            post.has_liked = True
+        for comment in comments:
+            existing_upvote = UpvoteModel.objects.filter(
+                comment_id=comment.id,
+            ).first()
+            print(f"upvote: {existing_upvote}")
+            comment.has_upvoted = True if existing_upvote else False
     return render(request, "feed.html", {"posts": posts})
 
 # Like view
 def like(request):
     user = check_validation(request)
-    if user and request.method == "POST":
-        form = LikeForm(request.POST)
-        if form.is_valid():
-            post_id = form.cleaned_data.get("post").id
-            existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
-            # If user has already registered a like, then delete it
-            if existing_like:
-                existing_like.delete()
-            else:
-                # Otherwise create a like
-                post = LikeModel.objects.create(post_id=post_id, user=user)
-                # Send email if the one who liked was someone other than the
-                # one who posted the comment
-                # if post.user.email != post.post.user.email:
-                #     send_mail(
-                #         "Heyy, You got a like from " + post.user.name,
-                #         "Check it out at smartp2pmarketplace.com",
-                #         "smartp2pmarketplace.com",
-                #         [post.post.user.email],
-                #         fail_silently=False,
-                #     )
-            return redirect("/feed/")
-    else:
+    if not user:
         return redirect("/login/")
+    elif request.method != "POST":
+        return redirect("/feed/")
+    
+    form = LikeForm(request.POST)
+    if form.is_valid():
+        post_id = form.cleaned_data.get("post").id
+        existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
+        # If user has already registered a like, then delete it
+        if existing_like:
+            existing_like.delete()
+        else:
+            # Otherwise create a like
+            post = LikeModel.objects.create(post_id=post_id, user=user)
+            # Send email if the one who liked was someone other than the
+            # one who posted the comment
+            # if post.user.email != post.post.user.email:
+            #     send_mail(
+            #         "Heyy, You got a like from " + post.user.name,
+            #         "Check it out at smartp2pmarketplace.com",
+            #         "smartp2pmarketplace.com",
+            #         [post.post.user.email],
+            #         fail_silently=False,
+            #     )
+        return redirect("/feed/")
 
 # Comment View
 def comment(request):
     user = check_validation(request)
-    if user and request.method == "POST":
+    if not user:
+        return redirect("/login")
+    elif request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
             post_id = form.cleaned_data.get("post").id
@@ -230,8 +229,6 @@ def comment(request):
             return redirect("/feed")
         else:
             return redirect("/feed/")
-    else:
-        return redirect("/login")
 
 # View to log the user out
 def logout(request):
@@ -246,22 +243,20 @@ def logout(request):
 # Upvote view
 def upvote(request):
     user = check_validation(request)
-    if user and request.method == "POST":
+    if not user:
+        return redirect("/login/")
+    elif request.method == "POST":
         form = UpvoteForm(request.POST)
         if form.is_valid():
-            print("form valid")
             comment_id = form.cleaned_data.get("comment").id
-            print(comment_id)
             existing_upvote = UpvoteModel.objects.filter(
                 comment_id=comment_id, user=user
             ).first()
-            print(existing_upvote)
             # If user has already registered an upvote, then delete it
             if existing_upvote:
                 existing_upvote.delete()
             else:
                 # Otherwise create an upvote
-                print("Create Upvote")
                 post = UpvoteModel.objects.create(comment_id=comment_id, user=user)
                 print(post)
                 print((UpvoteModel.objects.filter(comment=comment_id)))
@@ -270,35 +265,29 @@ def upvote(request):
         else:
             print("Form not valid")
             return redirect("/feed/")
-    else:
-        return redirect("/login/")
 
 def func(request, username):
     user = check_validation(request)
-    print("----Feed Main------")
-    if user:
-        usern = UserModel.objects.all().filter(username=username)
-        print(usern)
-        posts = (
-            PostModel.objects.all().filter(user=usern).order_by("-created_on")
-        )
-        for post in posts:
-            existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
-            comments = CommentModel.objects.filter(post_id=post.id)
-            if comments:
-                if len(comments) >= 1:
-                    for comment in comments:
-                        existing_upvote = UpvoteModel.objects.filter(
-                            comment=comment.id
-                        ).first()
-                        print(existing_upvote)
-
-                        if existing_upvote:
-                            comment.has_upvoted = True
-            # If user has liked the post set the boolean value to True
-            if existing_like:
-                post.has_liked = True
-        return render(request, "feed.html", {"posts": posts})
-    else:
+    if not user:
         return redirect("/login/")
-    return render(request, "hello.html", {"context": username})
+    
+    usern = UserModel.objects.all().filter(username=username)
+    print(usern)
+    posts = (
+        PostModel.objects.all().filter(user=usern).order_by("-created_on")
+    )
+    for post in posts:
+        existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        comments = CommentModel.objects.filter(post_id=post.id)
+        if comments:
+            for comment in comments:
+                existing_upvote = UpvoteModel.objects.filter(
+                    comment=comment.id
+                ).first()
+
+                if existing_upvote:
+                    comment.has_upvoted = True
+        # If user has liked the post set the boolean value to True
+        if existing_like:
+            post.has_liked = True
+    return render(request, "feed.html", {"posts": posts})

@@ -1,5 +1,7 @@
-from django.db import models
 import uuid
+import os
+from django.db import models
+from django.core.exceptions import ValidationError
 
 class UserModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -23,7 +25,7 @@ class SessionToken(models.Model):
 class PostModel(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    image = models.FileField(upload_to="user_images")
+    image = models.ImageField(upload_to="user_images")
     image_url = models.CharField(max_length=255)
     caption = models.CharField(max_length=240)
     created_on = models.DateTimeField(auto_now_add=True)
@@ -53,7 +55,7 @@ class CommentModel(models.Model):
     comment_text = models.CharField(max_length=555)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
-    has_upvoted = False
+    # has_upvoted = False
 
     @property
     def upvote_count(self):

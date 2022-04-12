@@ -12,7 +12,11 @@
   <body>
     {% include 'snippets/nav-auth.html' %}
     <main class="container vh-100" style="margin-top: -56px; padding-top: 56px;">
+      <div
+        class="d-flex flex-column align-items-center h-100 w-100"
+      >
       {% load cloudinary %} {% block content %} {% endblock content %}
+      </div>
     </main>
   </body>
   {% include 'snippets/scripts.html' %}

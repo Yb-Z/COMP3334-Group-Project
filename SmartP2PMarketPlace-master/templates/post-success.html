@@ -1,17 +1,18 @@
-{% extends 'base2.html' %} {% block content %}
-<div class="row justify-content-center align-items-center h-100">
-  <div class="col-10 text-center">
-    <h2>Success!</h2>
-  </div>
-  <div class="col-10 col-md-8 col-lg-6 card">
-    <img src="{{ post.image_url }}" class="card-img-top" alt="..." />
-    <div class="card-body">
-      <h5 class="card-title">{{ post.caption }}</h5>
-      <p class="card-text">
-        by {{ post.user.username }}
-      </p>
+{% extends 'base-auth.html' %} {% block content %}
+<div
+  class="d-flex flex-column justify-content-center align-items-center h-100 w-100"
+>
+  <div class="row justify-content-around align-items-center">
+    <div class="col-10 text-center">
+      <h2>Success!</h2>
+    </div>
+    <div class="col-10 col-md-8 col-lg-6 card">
+      <img src="{{ post.image_url }}" class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">{{ post.caption }}</h5>
+        <p class="card-text">by {{ post.user.username }}</p>
+      </div>
     </div>
   </div>
 </div>
-
 {% endblock %}

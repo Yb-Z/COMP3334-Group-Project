@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -6,17 +5,31 @@
     <title>Welcome</title>
     {% include 'snippets/css.html' %}
   </head>
-  <body  class="text-light">
+  <body class="text-light">
     {% include 'snippets/nav.html' %}
-    <img src='http://i.imgur.com/e7R6YVQ.jpg' class="img-fluid visually-hidden"></img>
+    <img
+      src="http://i.imgur.com/e7R6YVQ.jpg"
+      class="img-fluid visually-hidden"
+    />
     <div
-      style="background: center / cover no-repeat url('http://i.imgur.com/e7R6YVQ.jpg'); filter: blur(4px); z-index: -1;"
+      style="
+        background: center / cover no-repeat
+          url('http://i.imgur.com/e7R6YVQ.jpg');
+        filter: blur(4px);
+        z-index: -1;
+      "
       class="vh-100 vw-100 position-fixed z"
     ></div>
 
-    <main class="container vh-100" style="margin-top: -56px; padding-top: 56px; padding-bottom: 32px;">
-      {% block content %}
-      {% endblock content %}
+    <main
+      class="container vh-100"
+      style="margin-top: -56px; padding-top: 56px; padding-bottom: 32px"
+    >
+      <div
+        class="d-flex flex-column align-items-around justify-content-center h-100"
+      >
+        {% block content %}{% endblock content %}
+      </div>
     </main>
 
     {% include 'snippets/footer.html'%}
