@@ -4,15 +4,11 @@ from .models import *
 
 class SignUpForm(forms.ModelForm):
     class Meta:
-        model   = UserModel
-        fields  = ['name','username','email','password']
+        model = UserModel
+        fields = ['name','username','email','password']
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if UserModel.objects.filter(email=email).exists():
-            print('Email not valid')
-            return 'email exists'
-            raise ValidationError('Email already exists')
         return email
 
     def clean_password(self):
@@ -29,31 +25,26 @@ class SignUpForm(forms.ModelForm):
             raise ValidationError('Username must be greater than 4 characters')
         return username
 
-# class LoginForm(forms.ModelForm):
-#     class Meta:
-#         model = UserModel
-#         fields = ['username','password']
-
 class LoginForm(forms.Form):
-    username    = forms.CharField(max_length=120)
-    password    = forms.CharField(max_length=40)
+    username = forms.CharField(max_length=120)
+    password = forms.CharField(max_length=40)
 
 class PostForm(forms.ModelForm):
     class Meta:
-        model   = PostModel
-        fields  = ['image','caption']
+        model = PostModel
+        fields = ['image','caption']
 
 class LikeForm(forms.ModelForm):
     class Meta:
-        model   = LikeModel
-        fields  = ['post']
+        model = LikeModel
+        fields = ['post']
 
 class CommentForm(forms.ModelForm):
     class Meta:
-        model   = CommentModel
-        fields  = ['comment_text','post']
+        model = CommentModel
+        fields = ['comment_text','post']
 
 class UpvoteForm(forms.ModelForm):
     class Meta:
-        model   = UpvoteModel
-        fields  = ['comment']
+        model = UpvoteModel
+        fields = ['comment']
