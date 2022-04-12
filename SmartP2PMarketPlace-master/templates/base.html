@@ -6,8 +6,13 @@
     <title>Welcome</title>
     {% include 'snippets/css.html' %}
   </head>
-  <body>
+  <body  class="text-light">
     {% include 'snippets/nav.html' %}
+    <img src='http://i.imgur.com/e7R6YVQ.jpg' class="img-fluid visually-hidden"></img>
+    <div
+      style="background: center / cover no-repeat url('http://i.imgur.com/e7R6YVQ.jpg'); filter: blur(4px); z-index: -1;"
+      class="vh-100 vw-100 position-fixed z"
+    ></div>
 
     <main class="container vh-100" style="margin-top: -56px; padding-top: 56px; padding-bottom: 32px;">
       {% block content %}
