@@ -1,17 +1,18 @@
+
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Welcome</title>
     {% include 'snippets/css.html' %}
   </head>
   <body>
-    <div class='main' style="background: url('http://i.imgur.com/oNX5MgY.jpg') no-repeat center center fixed;background-size: cover;">
-      {% include 'snippets/nav.html' %}
-      {% block content %}
+    {% include 'snippets/nav.html' %}
 
+    <main class="container vh-100" style="margin-top: -56px; padding-top: 56px; padding-bottom: 32px;">
+      {% block content %}
       {% endblock content %}
-    </div>
+    </main>
 
     {% include 'snippets/footer.html'%}
   </body>

@@ -21,7 +21,7 @@ from marketapp.views import *
 
 urlpatterns = [
     re_path(r'^admin/', admin.site.urls),
-    re_path(r'^$', landing),
+    re_path(r'^$', welcome),
     re_path(r'^register/$', signup),
     re_path(r'^login/$',login),
     re_path(r'^post/$',feed),

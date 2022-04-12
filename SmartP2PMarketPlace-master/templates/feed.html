@@ -1,12 +1,14 @@
-{% extends 'base2.html' %}
-
-{% block content %}
+{% extends 'base2.html' %} {% block content %}
 <div class="feed">
   <h1>Create your post</h1>
   <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" class='btn btn-default' id='create_post' value='Create post!'>
+    {% csrf_token %} {{ form }}
+    <input
+      type="submit"
+      class="btn btn-default"
+      id="create_post"
+      value="Create post!"
+    />
   </form>
 </div>
 {% endblock %}

@@ -45,9 +45,8 @@ def create_payload(subject, message, email):
     }
     return payload
 
-# View to the landing page
-def landing(request):
-    return render(request, "landing.html")
+def welcome(request):
+    return render(request, "welcome.html")
 
 # View to the home page
 def signup(request):
@@ -95,13 +94,13 @@ def signup(request):
             return render(request, "success.html")
         else:
             print("Error occured while signing up")
-            return render(request, "home.html", {"context": signup_form.errors})
+            return render(request, "signup.html", {"context": signup_form.errors})
 
     else:
         signup_form = SignUpForm()
 
     # Render the home page
-    return render(request, "home.html", {"signup_form": signup_form})
+    return render(request, "signup.html", {"signup_form": signup_form})
 
 
 # View for the login page

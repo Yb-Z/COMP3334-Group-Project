@@ -1,12 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block content %}
 
-  {% block content %}
-    <div class="container success">
-      <h1>Signed up successfully! Please login to continue!</h1>
+<div class="d-flex flex-column align-items-center justify-content-center h-100">
+  <h1 class="mb-4">Success!</h1>
+  <a class="btn btn-primary text-uppercase" href="/login/">
+    login
+  </a>
+</div>
 
-      <form action="/login/" method="get">
-          <input type="submit" class="btn btn-default" value="Login" id='login-btn'>
-      </form>
-    </div>
-
-  {% endblock %}
+{% endblock %}
