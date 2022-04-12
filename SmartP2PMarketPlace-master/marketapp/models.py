@@ -3,7 +3,7 @@ import uuid
 
 class UserModel(models.Model):
     name = models.CharField(max_length=120, null=False)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
     username = models.CharField(max_length=120, unique=True)
     password = models.CharField(max_length=40)
     created_on = models.DateTimeField(auto_now_add=True)
