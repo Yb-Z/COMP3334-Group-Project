@@ -35,17 +35,23 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'marketapp',
     'cloudinary',
+    'django_extensions',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [ # TODO: Check security related middlewares!!!
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1"
 ]
 
 ROOT_URLCONF = 'marketplace.urls'
@@ -77,10 +83,9 @@ DATABASES = {
     }
 }
 
-EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST = ''
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -112,3 +117,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_URL = '/static/'
+
+# SESSION_COOKIE_SECURE = True
+# CSRF_COOKIE_SECURE = True
