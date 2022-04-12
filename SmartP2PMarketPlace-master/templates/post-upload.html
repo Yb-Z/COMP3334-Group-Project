@@ -1,0 +1,20 @@
+{% extends 'base2.html' %} {% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center h-100 w-100">
+  <h1 class="mb-4">Create your post</h1>
+  <form method="post" enctype="multipart/form-data" id="post">
+    {% csrf_token %} {{ form }}
+    <style>
+      label {
+        margin-right: 8px;
+        margin-bottom: 8px;
+      }
+      label[for*=id_caption] {
+        width: 100%
+      }
+    </style>
+  </form>
+  <button id="create_post" type="submit" form="post" class="btn btn-primary mt-4">
+    Create Post
+  </button>
+</div>
+{% endblock %}

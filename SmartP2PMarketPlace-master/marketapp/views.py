@@ -6,22 +6,22 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 import cloudinary
-import cloudinary.api
-import cloudinary.uploader
-from clarifai.rest import ClarifaiApp
+# from clarifai.rest import ClarifaiApp
 from marketplace.settings import BASE_DIR
 from marketapp.forms import *
 from marketapp.models import *
+from dotenv import load_dotenv
+load_dotenv()
 
 # Set up clarifai and define a model
 # app = ClarifaiApp(api_key="api_key_str")
 # model = app.models.get("general-v1.3")
 # Set up cloudinary
-# cloudinary.config(
-#     cloud_name="cloudinary_cloud_name",
-#     api_key="cloudinary_api_key",
-#     api_secret="cloudinary_secret",
-# )
+cloudinary.config(
+    cloud_name=os.getenv("C_NAME"),
+    api_key=os.getenv("C_KEY"),
+    api_secret=os.getenv("C_SECRET"),
+)
 
 def welcome(request):
     return render(request, "welcome.html")
@@ -64,11 +64,8 @@ def signup(request):
         else:
             print("Error occured while signing up")
             return render(request, "signup.html", {"context": signup_form.errors})
-
     else:
         signup_form = SignUpForm()
-
-    # Render the home page
     return render(request, "signup.html", {"signup_form": signup_form})
 
 # View for the login page
@@ -128,63 +125,56 @@ def check_validation(request): # TODO: Check this!
     else:
         return None
 
-# The view user has after logging in
-# def feed(request):
-#     return render(request,'feed.html')
-
 # Post View
-def feed(request):
+def post(request):
     user = check_validation(request)
-    if user:
-        if request.method == "GET":
-            form = PostForm()
-            return render(request, "feed.html", {"form": form})
-        elif request.method == "POST":
-            form = PostForm(request.POST, request.FILES)
-            if form.is_valid():
-                image = form.cleaned_data.get("image")
-                caption = form.cleaned_data.get("caption")
-                post = PostModel(user=user, image=image, caption=caption)
-                post.save()
-                # print 'Image saved in the db'
-                path = os.path.join(BASE_DIR, post.image.url)
-                # Upload to cloudinary API
-                uploaded = cloudinary.uploader.upload(path)
-                print((uploaded["secure_url"]))
-                post.image_url = uploaded["secure_url"]
-                post.save()
-                return render(request, "feed_new.html", {"post": post})
-        else:
-            return redirect("/login/")
-    else:
-        # If the user is not logged in
+    if not user:
         return redirect("/login/")
+    elif request.method not in ['GET', 'POST']:
+        return redirect("/login/")
+        
+    if request.method == "GET":
+        form = PostForm()
+        return render(request, "post-upload.html", {"form": form})
+    elif request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            image = form.cleaned_data.get("image")
+            caption = form.cleaned_data.get("caption")
+            post = PostModel(user=user, image=image, caption=caption)
+            post.save()
+            path = BASE_DIR + post.image.url
+            # Upload to cloudinary API
+            uploaded = cloudinary.uploader.upload(path)
+            # print((uploaded["secure_url"]))
+            post.image_url = uploaded["secure_url"]
+            post.save()
+            return render(request, "post-success.html", {"post": post})
 
 # Main feed View
-def feed_main(request):
+def feed(request):
     # Validates if the user is logged in or not
     user = check_validation(request)
-    print("----Feed Main------")
-    if user:
-        posts = PostModel.objects.all().order_by("-created_on")
-        for post in posts:
-            existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
-            comments = CommentModel.objects.filter(post_id=post.id)
-            if comments:
-                if len(comments) >= 1:
-                    for comment in comments:
-                        existing_upvote = UpvoteModel.objects.filter(
-                            comment=comment.id
-                        ).first()
-                        print(existing_upvote)
-                        if existing_upvote:
-                            comment.has_upvoted = True
-            # If user has liked the post set the boolean value to True
-            if existing_like:
-                post.has_liked = True
-        return render(request, "feed_main.html", {"posts": posts})
-    else:
+    if not user:
         return redirect("/login/")
+
+    posts = PostModel.objects.all().order_by("-created_on")
+    for post in posts:
+        existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        comments = CommentModel.objects.filter(post_id=post.id)
+        if comments:
+            if len(comments) >= 1:
+                for comment in comments:
+                    existing_upvote = UpvoteModel.objects.filter(
+                        comment=comment.id
+                    ).first()
+                    print(existing_upvote)
+                    if existing_upvote:
+                        comment.has_upvoted = True
+        # If user has liked the post set the boolean value to True
+        if existing_like:
+            post.has_liked = True
+    return render(request, "feed.html", {"posts": posts})
 
 # Like view
 def like(request):
@@ -308,7 +298,7 @@ def func(request, username):
             # If user has liked the post set the boolean value to True
             if existing_like:
                 post.has_liked = True
-        return render(request, "feed_main.html", {"posts": posts})
+        return render(request, "feed.html", {"posts": posts})
     else:
         return redirect("/login/")
     return render(request, "hello.html", {"context": username})

@@ -100,3 +100,4 @@ ENV/
 .mypy_cache/
 
 */migrations/
+user_images/
