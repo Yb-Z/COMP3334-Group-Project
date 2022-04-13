@@ -24,11 +24,15 @@ cloudinary.config(
 )
 
 def welcome(request):
-    return render(request, "welcome.html")
+    user = check_validation(request)
+    if not user:
+        return render(request, "welcome.html")
+    
+    return render(request, "dashboard.html", {"user": user})
 
 # View to the home page
 def signup(request):
-    today = datetime.now()
+    user = check_validation(request)
     if request.method == "POST":
         signup_form = SignUpForm(request.POST)
 
@@ -65,11 +69,17 @@ def signup(request):
             print("Error occured while signing up")
             return render(request, "signup.html", {"context": signup_form.errors})
     else:
+        exist_user = check_validation(request)
+        if exist_user:
+            redirect("/feed")
         signup_form = SignUpForm()
     return render(request, "signup.html", {"signup_form": signup_form})
 
 # View for the login page
 def login(request):
+    exist_user = check_validation(request)
+    if exist_user:
+        redirect("/feed")
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -194,8 +204,8 @@ def like(request):
             # if post.user.email != post.post.user.email:
             #     send_mail(
             #         "Heyy, You got a like from " + post.user.name,
-            #         "Check it out at smartp2pmarketplace.com",
-            #         "smartp2pmarketplace.com",
+            #         "Check it out at digitalartworkplatform.com",
+            #         "digitalartworkplatform.com",
             #         [post.post.user.email],
             #         fail_silently=False,
             #     )

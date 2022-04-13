@@ -6,7 +6,9 @@
     {% include 'snippets/css.html' %}
   </head>
   <body class="text-info">
+    {% block nav %}
     {% include 'snippets/nav.html' %}
+    {% endblock nav %}
     {% comment %} <img
       src="https://res.cloudinary.com/moenupa/image/upload/v1649776500/theme_tyl4gd.jpg"
       class="img-fluid vh-100 vw-100 position-fixed" style="filter: blur(4px); z-index: -1;"

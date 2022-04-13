@@ -1,6 +1,7 @@
 {% extends 'base.html' %} {% block content %}
-
-<h1 class="mb-4 text-center">Welcome to Digital Art Platform</h1>
+<h1 class="mb-4 text-center" style="text-shadow: 2px 2px 6px black">
+  Welcome to Digital Art Platform
+</h1>
 <div class="row w-100 justify-content-center align-items-center">
   <div class="col-12 col-md-9 col-lg-6">
     <form method="post" id="signup" class="w-100">
@@ -22,7 +23,7 @@
           class="form-control"
           aria-label="username input"
           aria-describedby="username-label"
-          value="{{username}}"
+          value="{{user.username}}"
         />
       </div>
       <div class="input-group mb-3 w-100">
@@ -40,7 +41,7 @@
           class="form-control"
           aria-label="name input"
           aria-describedby="name-label"
-          value="{{name}}"
+          value="{{user.name}}"
         />
       </div>
       <div class="input-group mb-3 w-100">
@@ -58,7 +59,7 @@
           class="form-control"
           aria-label="email input"
           aria-describedby="email-label"
-          value="{{email}}"
+          value="{{user.email}}"
         />
       </div>
       <div class="input-group mb-3 w-100">
@@ -76,7 +77,7 @@
           class="form-control"
           aria-label="password input"
           aria-describedby="password-label"
-          value="{{password}}"
+          value="{{user.password}}"
         />
       </div>
     </form>
@@ -84,6 +85,7 @@
 </div>
 <div class="text-center">
   <button type="submit" form="signup" value="Submit" class="btn btn-info">
+    <i class="fa-solid fa-user me-1" aria-hidden="true"></i>
     Sign Up
   </button>
 </div>
