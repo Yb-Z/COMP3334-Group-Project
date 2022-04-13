@@ -24,14 +24,17 @@ cloudinary.config(
     api_secret=os.getenv("C_SECRET"),
 )
 
+
 def welcome(request):
     user = check_validation(request)
     if not user:
         return render(request, "welcome.html")
-    
+
     return render(request, "dashboard.html", {"user": user})
 
 # View to the home page
+
+
 def signup(request):
     user = check_validation(request)
     if request.method == "POST":
@@ -77,6 +80,8 @@ def signup(request):
     return render(request, "signup.html", {"signup_form": signup_form})
 
 # View for the login page
+
+
 def login(request):
     exist_user = check_validation(request)
     if exist_user:
@@ -95,7 +100,8 @@ def login(request):
                     token.create_token()
                     token.save()
                     response = redirect("/feed/")
-                    response.set_cookie(key="session_token", value=token.session_token)
+                    response.set_cookie(key="session_token",
+                                        value=token.session_token)
                     return response
                 else:
                     # User is not valid
@@ -109,7 +115,8 @@ def login(request):
                 # User does not exist'
                 print("User doesnt exist")
                 return render(
-                    request, "login.html", {"context": "Username not registered"}
+                    request, "login.html", {
+                        "context": "Username not registered"}
                 )
         else:
             # Form is not Valid
@@ -126,7 +133,9 @@ def login(request):
     return render(request, "login.html")
 
 # Check if the current session is valid
-def check_validation(request): # TODO: Check this!
+
+
+def check_validation(request):  # TODO: Check this!
     if request.COOKIES.get("session_token"):
         session = SessionToken.objects.filter(
             session_token=request.COOKIES.get("session_token")
@@ -137,13 +146,15 @@ def check_validation(request): # TODO: Check this!
         return None
 
 # Post View
+
+
 def post(request):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
     elif request.method not in ['GET', 'POST']:
         return redirect("/login/")
-        
+
     if request.method == "GET":
         form = PostForm()
         return render(request, "post-upload.html", {"form": form})
@@ -163,6 +174,8 @@ def post(request):
             return render(request, "post-success.html", {"post": post})
 
 # Main feed View
+
+
 def feed(request):
     # Validates if the user is logged in or not
     user = check_validation(request)
@@ -171,7 +184,8 @@ def feed(request):
 
     posts = PostModel.objects.all().order_by("-created_on")
     for post in posts:
-        existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        existing_like = LikeModel.objects.filter(
+            post_id=post.id, user=user).first()
         post.has_liked = True if existing_like else False
         comments = CommentModel.objects.filter(post_id=post.id)
         for comment in comments:
@@ -183,17 +197,20 @@ def feed(request):
     return render(request, "feed.html", {"posts": posts})
 
 # Like view
+
+
 def like(request):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
     elif request.method != "POST":
         return redirect("/feed/")
-    
+
     form = LikeForm(request.POST)
     if form.is_valid():
         post_id = form.cleaned_data.get("post").id
-        existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
+        existing_like = LikeModel.objects.filter(
+            post_id=post_id, user=user).first()
         # If user has already registered a like, then delete it
         if existing_like:
             existing_like.delete()
@@ -209,12 +226,14 @@ def like(request):
                     f"Your Artwork {post.post.caption} is liked by {post.user.name}",
                     f"Buyer {post.user.name}: {post.user.email}\nYou can check it out at digitalartworkplatform.com",
                     settings.EMAIL_HOST_USER,
-                    [post.post.user.email,],
+                    [post.post.user.email, ],
                     fail_silently=False,
                 )
         return redirect("/feed/")
 
 # Comment View
+
+
 def comment(request):
     user = check_validation(request)
     if not user:
@@ -244,6 +263,8 @@ def comment(request):
             return redirect("/feed/")
 
 # View to log the user out
+
+
 def logout(request):
     user = check_validation(request)
     if user:
@@ -254,6 +275,8 @@ def logout(request):
         return redirect("/feed/")
 
 # Upvote view
+
+
 def upvote(request):
     user = check_validation(request)
     if not user:
@@ -270,7 +293,8 @@ def upvote(request):
                 existing_upvote.delete()
             else:
                 # Otherwise create an upvote
-                post = UpvoteModel.objects.create(comment_id=comment_id, user=user)
+                post = UpvoteModel.objects.create(
+                    comment_id=comment_id, user=user)
                 print(post)
                 print((UpvoteModel.objects.filter(comment=comment_id)))
                 post.save()
@@ -279,18 +303,20 @@ def upvote(request):
             print("Form not valid")
             return redirect("/feed/")
 
+
 def func(request, username):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    
+
     usern = UserModel.objects.all().filter(username=username)
     print(usern)
     posts = (
         PostModel.objects.all().filter(user=usern).order_by("-created_on")
     )
     for post in posts:
-        existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        existing_like = LikeModel.objects.filter(
+            post_id=post.id, user=user).first()
         comments = CommentModel.objects.filter(post_id=post.id)
         if comments:
             for comment in comments:
@@ -304,3 +330,27 @@ def func(request, username):
         if existing_like:
             post.has_liked = True
     return render(request, "feed.html", {"posts": posts})
+
+
+# Main trans View (copied from feed)
+def trans(request):
+    # Validates if the user is logged in or not
+    user = check_validation(request)
+    if not user:
+        return redirect("/login/")
+
+    posts = PostModel.objects.all().order_by("-created_on")
+    for post in posts:
+        # only show the posts of the user
+        if post.user.username == user.username:
+            existing_like = LikeModel.objects.filter(
+                post_id=post.id, user=user).first()
+            post.has_liked = True if existing_like else False
+            comments = CommentModel.objects.filter(post_id=post.id)
+            for comment in comments:
+                existing_upvote = UpvoteModel.objects.filter(
+                    comment_id=comment.id,
+                ).first()
+                print(f"upvote: {existing_upvote}")
+                comment.has_upvoted = True if existing_upvote else False
+    return render(request, "trans.html", {"posts": posts})

@@ -31,5 +31,6 @@ urlpatterns = [
     re_path(r'^like/$',like),
     re_path(r'^upvote/',upvote),
     re_path(r'^comment/$',comment),
-    re_path(r'^logout/$', logout)
+    re_path(r'^logout/$', logout),
+    re_path(r'^trans/$', trans)
 ]
