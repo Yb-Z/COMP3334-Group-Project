@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'debug_toolbar'
 ]
 
-MIDDLEWARE = [ # TODO: Check security related middlewares!!!
+MIDDLEWARE = [  # TODO: Check security related middlewares!!!
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -62,7 +62,7 @@ ROOT_URLCONF = 'marketplace.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
