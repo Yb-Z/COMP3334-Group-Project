@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 from django.contrib.auth.hashers import check_password, make_password
+from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 import cloudinary
@@ -201,14 +202,14 @@ def like(request):
             post = LikeModel.objects.create(post_id=post_id, user=user)
             # Send email if the one who liked was someone other than the
             # one who posted the comment
-            # if post.user.email != post.post.user.email:
-            #     send_mail(
-            #         "Heyy, You got a like from " + post.user.name,
-            #         "Check it out at digitalartworkplatform.com",
-            #         "digitalartworkplatform.com",
-            #         [post.post.user.email],
-            #         fail_silently=False,
-            #     )
+            if post.user.email != post.post.user.email:
+                send_mail(
+                    f"Your Artwork {post.post.caption} is liked by {post.user.name}",
+                    f"Buyer {post.user.name}: {post.user.email}\nYou can check it out at digitalartworkplatform.com",
+                    settings.EMAIL_HOST_USER,
+                    [post.post.user.email,],
+                    fail_silently=False,
+                )
         return redirect("/feed/")
 
 # Comment View
