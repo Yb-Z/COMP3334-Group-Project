@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'debug_toolbar'
 ]
 
-MIDDLEWARE = [ # TODO: Check security related middlewares!!!
+MIDDLEWARE = [  # TODO: Check security related middlewares!!!
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -62,7 +62,7 @@ ROOT_URLCONF = 'marketplace.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,10 +88,10 @@ DATABASES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
-SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'j1138561926@gmail.com'
+SERVER_EMAIL = 'j1138561926@gmail.com'
+EMAIL_HOST_USER = 'j1138561926@gmail.com'
+EMAIL_HOST_PASSWORD = 'jiangrx007'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
