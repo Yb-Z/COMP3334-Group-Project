@@ -67,3 +67,31 @@ class UpvoteModel(models.Model):
     comment = models.ForeignKey(CommentModel, on_delete=models.CASCADE)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
+
+class Order(models.Model):
+    ref_code = models.CharField(max_length=20, blank=True, null=True)
+    buyer = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    item = models.ForeignKey(PostModel, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    agreeded = models.BooleanField(default=False)
+    payment = models.ForeignKey('Payment', on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.buyer.username
+
+    def get_total(self):
+        total = 0
+        for order_item in self.items.all():
+            total += order_item.get_final_price()
+        if self.coupon:
+            total -= self.coupon.amount
+        return total
+
+class Payment(models.Model):
+    stripe_charge_id = models.CharField(max_length=50)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
+    amount = models.FloatField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username

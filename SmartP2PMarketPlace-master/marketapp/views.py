@@ -301,3 +301,16 @@ def func(request, username):
         if existing_like:
             post.has_liked = True
     return render(request, "feed.html", {"posts": posts})
+
+def get_order0(request):
+    return render(request, "order0.html")
+
+def get_order1(request):
+    return render(request, "order.html")
+
+def checkout(request):
+    return render(request, "checkout.html")
+
+def payment(request):
+    return render(request, "payment.html")
+
