@@ -127,3 +127,6 @@ STATIC_URL = '/static/'
 
 # SESSION_COOKIE_SECURE = True
 # CSRF_COOKIE_SECURE = True
+TEMPLATE_CONTEXT_PROCESSORS = [
+    'django.core.context_processors.request',
+]

@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
+from django.template import *
 import cloudinary
 # from clarifai.rest import ClarifaiApp
 from marketplace.settings import BASE_DIR
@@ -27,9 +28,9 @@ cloudinary.config(
 def welcome(request):
     user = check_validation(request)
     if not user:
-        return render(request, "welcome.html")
+        return render(request, "welcome.html", {"path": request.path})
     
-    return render(request, "dashboard.html", {"user": user})
+    return render(request, "dashboard.html", {"user": user, "path": request.path})
 
 # View to the home page
 def signup(request):
@@ -65,16 +66,16 @@ def signup(request):
             # except BadHeaderError:
             # return HttpResponse('Invalid header found')
             # Show the success page
-            return render(request, "success.html")
+            return render(request, "success.html", {"path": request.path})
         else:
             print("Error occured while signing up")
-            return render(request, "signup.html", {"context": signup_form.errors})
+            return render(request, "signup.html", {"context": signup_form.errors, "path": request.path})
     else:
         exist_user = check_validation(request)
         if exist_user:
             redirect("/feed")
         signup_form = SignUpForm()
-    return render(request, "signup.html", {"signup_form": signup_form})
+    return render(request, "signup.html", {"signup_form": signup_form, "path": request.path})
 
 # View for the login page
 def login(request):
@@ -103,13 +104,13 @@ def login(request):
                     return render(
                         request,
                         "login.html",
-                        {"context": "Your password is not correct! Try Again!"},
+                        {"context": "Your password is not correct! Try Again!", "path": request.path},
                     )
             else:
                 # User does not exist'
                 print("User doesnt exist")
                 return render(
-                    request, "login.html", {"context": "Username not registered"}
+                    request, "login.html", {"context": "Username not registered", "path": request.path}
                 )
         else:
             # Form is not Valid
@@ -118,12 +119,13 @@ def login(request):
                 request,
                 "login.html",
                 {
-                    "context": "Could not log you in. Please fill all the fields correctly"
+                    "context": "Could not log you in. Please fill all the fields correctly",
+                    "path": request.path
                 },
             )
     else:
         form = LoginForm()
-    return render(request, "login.html")
+    return render(request, "login.html", {"path": request.path})
 
 # Check if the current session is valid
 def check_validation(request): # TODO: Check this!
@@ -146,7 +148,7 @@ def post(request):
         
     if request.method == "GET":
         form = PostForm()
-        return render(request, "post-upload.html", {"form": form})
+        return render(request, "post-upload.html", {"form": form, "path": request.path})
     elif request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
@@ -160,7 +162,7 @@ def post(request):
             # print((uploaded["secure_url"]))
             post.image_url = uploaded["secure_url"]
             post.save()
-            return render(request, "post-success.html", {"post": post})
+            return render(request, "post-success.html", {"post": post, "path": request.path})
 
 # Main feed View
 def feed(request):
@@ -180,7 +182,7 @@ def feed(request):
             ).first()
             print(f"upvote: {existing_upvote}")
             comment.has_upvoted = True if existing_upvote else False
-    return render(request, "feed.html", {"posts": posts})
+    return render(request, "feed.html", {"posts": posts, "path": request.path})
 
 def manage(request):
     # Validates if the user is logged in or not
@@ -195,7 +197,7 @@ def manage(request):
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
         post.has_liked = True if existing_like else False
-    return render(request, "manage.html", {"posts": posts, "users":users})
+    return render(request, "manage.html", {"posts": posts, "users":users, "path": request.path})
 
 def transfer(request):
     user = check_validation(request)
@@ -336,4 +338,4 @@ def func(request, username):
         # If user has liked the post set the boolean value to True
         if existing_like:
             post.has_liked = True
-    return render(request, "feed.html", {"posts": posts})
+    return render(request, "feed.html", {"posts": posts, "path": request.path})

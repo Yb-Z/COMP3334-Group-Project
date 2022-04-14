@@ -9,23 +9,25 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a href="/feed" class="nav-link text-capitalize">
+          <a href="/feed" class="nav-link text-capitalize {% if 'feed' in path %}active{% endif %}">
             feed
             <i class="fa-solid fa-paper-plane" aria-hidden="true"></i>
           </a>
         </li>
         <li class="nav-item">
-          <a href="/post" class="nav-link text-capitalize">New Post<i class="fa-solid fa-plus-circle ms-1"
-              aria-hidden="true"></i></a>
+          <a href="/post" class="nav-link text-capitalize {% if 'post' in path %}active{% endif %}">
+            New Post
+            <i class="fa-solid fa-plus-circle ms-1" aria-hidden="true"></i>
+          </a>
         </li>
         <li class="nav-item">
-          <a href="/manage" class="nav-link text-capitalize">
+          <a href="/manage" class="nav-link text-capitalize {% if 'manage' in path %}active{% endif %}">
             transfer
             <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
           </a>
         </li>
       </ul>
-      <a href="/logout" class="text-capitalize btn btn-info">
+      <a href="/logout" class="text-capitalize btn btn-info {% if 'logout' in path %}active{% endif %}">
         logout
         <i class="fa-solid fa-right-from-bracket ms-1" aria-hidden="true"></i>
       </a>

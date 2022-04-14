@@ -21,13 +21,13 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li>
-          <a href="/login" class="nav-link text-capitalize">
+          <a href="/login" class="nav-link text-capitalize {% if 'login' in path %}active{% endif %}">
             <i class="fa-solid fa-right-to-bracket me-1" aria-hidden="true"></i>
             login
           </a>
         </li>
         <li>
-          <a href="/register" class="nav-link text-capitalize">
+          <a href="/register" class="nav-link text-capitalize {% if 'register' in path %}active{% endif %}">
             <i class="fa-solid fa-user me-1" aria-hidden="true"></i>
             register
           </a>
