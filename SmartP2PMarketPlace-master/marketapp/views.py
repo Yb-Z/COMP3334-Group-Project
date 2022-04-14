@@ -306,12 +306,18 @@ def func(request, username):
     return render(request, "feed.html", {"posts": posts})
 
 def get_order0(request):
+    # http://127.0.0.1:8000/order/user_b_order1/0/ 
+    # After b like/comment, this order will be created. Status: Wait for owner's agreement.
     return render(request, "order0.html")
 
 def get_order1(request):
+    # http://127.0.0.1:8000/order/user_b_order1/1/ 
+    # After a agreed, this order'a status will be change to: Owner agrees to transaction.
     return render(request, "order.html")
 
 def get_order2(request):
+    # http://127.0.0.1:8000/order/user_b_order1/2/
+    # This is for the owner to view order and sent msg to the buyer.
     return render(request, "owner_agree.html")
 
 def checkout(request):
