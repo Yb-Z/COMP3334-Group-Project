@@ -27,7 +27,7 @@ urlpatterns = [
     re_path(r'^login/$',login),
     re_path(r'^post/$',post),
     re_path(r'^feed/$',feed),
-    re_path(r'^feed/uid/(?P<username>[\w.@+-]+)$',feed_by_user),
+    re_path(r'^feed/uid/(?P<name>[\w.@+-]+)$',feed_by_user),
     re_path(r'^feed/pid/(?P<post_id>[\d.@+-]+)$',feed_by_post),
     re_path(r'^like/$',like),
     re_path(r'^upvote/',upvote),

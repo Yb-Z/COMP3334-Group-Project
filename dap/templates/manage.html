@@ -25,7 +25,7 @@
                   >
                     {% for dest_user in users %}
                     <option value="{{ dest_user.email }}">
-                      {{dest_user.username}}: {{ dest_user.email }}
+                      {{dest_user.name}}: {{ dest_user.email }}
                     </option>
                     {% endfor %}
                   </select>

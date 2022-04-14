@@ -55,13 +55,13 @@ def signup(request):
             user.save()
 
             # Send an email to the user on successful sign up
-            # send_mail(
-            #     "Welcome",
-            #     "Thanks for being a part of my Digital Artwork Platform. You are awesome :)",
-            #     "digitalartworkplatform.com.com",
-            #     [email],
-            #     fail_silently=False,
-            # )
+            """send_mail(
+                f"Welcome to Digital Artwork Platform",
+                f"Dear {name},\n\nThank you for registration on dap.com.\n\nDAP",
+                settings.EMAIL_HOST_USER,
+                [email,],
+                fail_silently=False,
+            )"""
             # To prevent header injection https://docs.djangoproject.com/es/1.11/topics/email/#preventing-header-injection
             # except BadHeaderError:
             # return HttpResponse('Invalid header found')
@@ -237,12 +237,10 @@ def like(request):
             post = LikeModel.objects.create(post_id=post_id, user=user)
             # Send email if the one who liked was someone other than the
             # one who posted the comment
-            # if post.user.email != post.post.user.email:
-            # ! for testing
-            if True:
+            if post.user.email != post.post.user.email:
                 send_mail(
                     f"Updates to Your Artwork {post.post.caption}",
-                    f"Dear {post.post.user.username},\n\nYour Artwork {post.post.caption}: {post.post.image_url} is liked by buyer {post.user.name}: {post.user.email}.\nYou can check it out at digitalartworkplatform.com.\n\nDAP",
+                    f"Dear {post.post.user.name},\n\nYour Artwork {post.post.caption}: {post.post.image_url} is liked by buyer {post.user.name}: {post.user.email}.\nYou can check it out at dap.com.\n\nDAP",
                     settings.EMAIL_HOST_USER,
                     [post.post.user.email,],
                     fail_silently=False,
@@ -266,14 +264,14 @@ def comment(request):
             comment.save()
             # Send email if the one who liked was someone other than the
             # one who posted the comment
-            # if comment.user.email != comment.post.user.email:
-            #     send_mail(
-            #         "Heyy, You got a comment from " + comment.user.name,
-            #         "Check it out at digitalartworkplatform.com.com",
-            #         "digitalartworkplatform.com.com",
-            #         [comment.post.user.email],
-            #         fail_silently=False,
-            #     )
+            """if comment.user.email != comment.post.user.email:
+                send_mail(
+                    f"New comment from {comment.user.name} on Your Post {comment.post.caption}",
+                    f"Dear {comment.post.user.name}:\n\n{comment.user.name}: {comment_text}\n\nCheck it out at dap.com\n\n DAP",
+                    settings.EMAIL_HOST_USER,
+                    [comment.post.user.email],
+                    fail_silently=False,
+                )"""
             return redirect("/feed")
         else:
             return redirect("/feed/")
@@ -314,12 +312,11 @@ def upvote(request):
             print("Form not valid")
             return redirect("/feed/")
 
-def feed_by_user(request, username):
+def feed_by_user(request, name):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    print(f"username: {username}")
-    usern = UserModel.objects.all().filter(username=username).first()
+    usern = UserModel.objects.all().filter(name=name).first()
     # print(usern)
     posts = PostModel.objects.filter(user=usern).order_by("-created_on")
     for post in posts:
