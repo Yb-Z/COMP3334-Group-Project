@@ -1,0 +1,58 @@
+{% extends 'base-auth.html' %} {% block content %} {% if posts %}
+<div class="d-flex flex-column h-100 w-100">
+  <div class="row py-4 justify-content-around align-items-stretch">
+    {% for post in posts %}
+    <div class="col-10 col-md-6 col-lg-4 p-2">
+      <div class="card h-100">
+        <img src="{{ post.image_url }}" class="card-img-top" />
+        <div class="card-body">
+          <h5 class="card-title">{{ post.caption }}</h5>
+          <p class="card-text">
+            by <span class="text-primary">{{ post.user.name }}</span> at
+            <span class="text-muted fw-light">{{ post.created_on }}</span>
+          </p>
+          <div class="row g-0">
+            <span class="col-12">
+              <form method="POST" action="/transfer/" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ post.id }}" />
+                <div class="input-group">
+                  <select
+                    class="form-select"
+                    name="user"
+                    id="user"
+                    aria-label="Select Recipient"
+                  >
+                    {% for dest_user in users %}
+                    <option value="{{ dest_user.email }}">
+                      {{dest_user.username}}: {{ dest_user.email }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <input
+                    class="btn btn-outline-secondary"
+                    type="submit"
+                    name="submit"
+                    value="Transfer"
+                  />
+                </div>
+              </form>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+<div
+  class="d-flex flex-column h-100 w-100 justify-content-center align-items-center"
+>
+  <h1 class="mb-2">Oops!</h1>
+  <h5 class="mb-4">No post belongs to you yet.</h5>
+  <a href="/post" class="btn btn-info me-2">
+    New Post<i class="fa-solid fa-plus-circle ms-1" aria-hidden="true"></i>
+  </a>
+</div>
+{% endif %} {% endblock %}

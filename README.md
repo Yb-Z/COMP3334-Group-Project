@@ -9,3 +9,4 @@
 5. init the database by `python manage.py makemigrations marketapp`.
 6. confirm migration by `python manage.py migrate`.
 7. run the server by `python manage.py runserver`.
+8. `python manage.py runsslserver --certificate cert.pem --key key.pem`
