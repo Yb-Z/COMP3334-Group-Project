@@ -34,6 +34,7 @@ urlpatterns = [
     re_path(r'^logout/$', logout),
     re_path(r'^order/user_b_order1/0', get_order0),
     re_path(r'^order/user_b_order1/1', get_order1),
+    re_path(r'^order/user_b_order1/2', get_order2),
     re_path(r'^checkout/user_b_order1', checkout),
     re_path(r'^payment/$', payment),
 ]

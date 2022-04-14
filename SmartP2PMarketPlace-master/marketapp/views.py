@@ -311,6 +311,9 @@ def get_order0(request):
 def get_order1(request):
     return render(request, "order.html")
 
+def get_order2(request):
+    return render(request, "owner_agree.html")
+
 def checkout(request):
     return render(request, "checkout.html")
 
