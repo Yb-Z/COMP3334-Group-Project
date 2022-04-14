@@ -5,9 +5,7 @@
 <div class="row w-100 justify-content-center align-items-center">
   <div class="col-12 col-md-9 col-lg-6">
     <form method="post" id="signup" class="w-100">
-      {% csrf_token %} {% if context %}
-      <div class="alert alert-danger" role="alert">{{ context }}</div>
-      {% endif %}
+      {% csrf_token %}
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
@@ -26,11 +24,16 @@
           value="{{user.username}}"
         />
       </div>
+      {% for msg in context.username %}
+      <div class="alert alert-danger" role="alert">
+        {{ msg }}
+      </div>
+      {% endfor %}
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
           id="name-label"
-          >Name</span
+          >Display Name</span
         >
         <input
           id="name"
@@ -44,6 +47,11 @@
           value="{{user.name}}"
         />
       </div>
+      {% for msg in context.name %}
+      <div class="alert alert-danger" role="alert">
+        {{ msg }}
+      </div>
+      {% endfor %}
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
@@ -62,6 +70,11 @@
           value="{{user.email}}"
         />
       </div>
+      {% for msg in context.email %}
+      <div class="alert alert-danger" role="alert">
+        {{ msg }}
+      </div>
+      {% endfor %}
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
@@ -80,6 +93,11 @@
           value="{{user.password}}"
         />
       </div>
+      {% for msg in context.password %}
+      <div class="alert alert-danger" role="alert">
+        {{ msg }}
+      </div>
+      {% endfor %}
     </form>
   </div>
 </div>

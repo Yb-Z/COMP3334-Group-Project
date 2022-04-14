@@ -4,10 +4,10 @@
 <div class="row w-100 justify-content-center align-items-center">
   <div class="col-12 col-md-9 col-lg-6">
     <form method="post" id="login" class="w-100">
-      {% csrf_token %} {% if context %}
+      {% csrf_token %} 
+      {% if context %}
       <div class="alert alert-danger" role="alert">{{ context }}</div>
       {% endif %}
-
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
@@ -23,6 +23,7 @@
           aria-describedby="username-label"
         />
       </div>
+      
       <div class="input-group mb-3 w-100">
         <span
           class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
