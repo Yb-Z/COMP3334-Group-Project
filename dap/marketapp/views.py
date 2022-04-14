@@ -8,16 +8,12 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect, render
 from django.template import *
 import cloudinary
-# from clarifai.rest import ClarifaiApp
 from marketplace.settings import BASE_DIR
 from marketapp.forms import *
 from marketapp.models import *
 from dotenv import load_dotenv
 load_dotenv()
 
-# Set up clarifai and define a model
-# app = ClarifaiApp(api_key="api_key_str")
-# model = app.models.get("general-v1.3")
 # Set up cloudinary
 cloudinary.config(
     cloud_name=os.getenv("C_NAME"),

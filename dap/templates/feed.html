@@ -8,7 +8,7 @@
         <div class="card-body">
           <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
           <p class="card-text">
-            by <a class="link-primary" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
+            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
           </p>
           <div class="row g-0">
             <span class="col-3">
@@ -45,7 +45,7 @@
           <ul class="list-group list-group-flush">
             {% for comment in post.comments %}
             <li class="list-group-item">
-              <a class="link-primary" href="/feed/uid/{{comment.user.name}}">{{ comment.user.name }}</a>
+              <a class="link-primary text-decoration-none" href="/feed/uid/{{comment.user.name}}">{{ comment.user.name }}</a>
               <span class="text-muted fw-light">{{ comment.created_on }}:</span>
               <span class="{{ comment.has_upvoted }}">{{ comment.comment_text }}</span>
 
