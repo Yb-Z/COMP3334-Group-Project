@@ -1,5 +1,6 @@
 # request -> response / request handler / action
 import os
+import hashlib
 from datetime import datetime
 
 from django.contrib.auth.hashers import check_password, make_password
@@ -13,6 +14,7 @@ from marketapp.forms import *
 from marketapp.models import *
 from dotenv import load_dotenv
 load_dotenv()
+
 
 # Set up cloudinary
 cloudinary.config(
@@ -152,13 +154,18 @@ def post(request):
             caption = form.cleaned_data.get("caption")
             post = PostModel(user=user, image=image, caption=caption)
             post.save()
-            path = BASE_DIR + post.image.url
-            # Upload to cloudinary API
-            uploaded = cloudinary.uploader.upload(path)
-            # print((uploaded["secure_url"]))
-            post.image_url = uploaded["secure_url"]
-            post.save()
-            return render(request, "post-success.html", {"post": post, "path": request.path})
+            path = f"{BASE_DIR}{post.image.url}"
+            with open(path, "rb") as f:
+                val = hashlib.sha256(f.read()).hexdigest()
+                if PostModel.objects.filter(hash=val).exists():
+                    post.delete()
+                    return render(request, "post-upload.html", {"form": form, "path": request.path, "context": "Image already exists"})
+                post.hash = val
+                # Upload to cloudinary API
+                uploaded = cloudinary.uploader.upload(path)
+                post.image_url = uploaded["secure_url"]
+                post.save()
+                return render(request, "post-success.html", {"post": post, "path": request.path})
 
 # Main feed View
 def feed(request):

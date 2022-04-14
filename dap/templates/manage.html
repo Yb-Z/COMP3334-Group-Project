@@ -2,14 +2,13 @@
 <div class="d-flex flex-column h-100 w-100">
   <div class="row py-4 justify-content-around align-items-stretch">
     {% for post in posts %}
-    <div class="col-10 col-md-6 col-lg-4 p-2">
+    <div class="col-12 p-2 {% if posts.count >= 4 %}col-xl-3 {% endif %}{% if posts.count >= 3 %}col-lg-4 {% endif %}{% if posts.count >= 2 %}col-md-6 {% endif %} ">
       <div class="card h-100">
         <img src="{{ post.image_url }}" class="card-img-top" />
-        <div class="card-body">
-          <h5 class="card-title">{{ post.caption }}</h5>
+        <div class="card-body my-auto">
+          <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
           <p class="card-text">
-            by <span class="text-primary">{{ post.user.name }}</span> at
-            <span class="text-muted fw-light">{{ post.created_on }}</span>
+            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
           </p>
           <div class="row g-0">
             <span class="col-12">
@@ -29,12 +28,14 @@
                     </option>
                     {% endfor %}
                   </select>
-                  <input
+                  <button
                     class="btn btn-outline-secondary"
                     type="submit"
                     name="submit"
                     value="Transfer"
-                  />
+                  >
+                    <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
+                  </button>
                 </div>
               </form>
             </span>

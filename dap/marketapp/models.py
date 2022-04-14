@@ -1,7 +1,5 @@
 import uuid
-import os
 from django.db import models
-from django.core.exceptions import ValidationError
 
 class UserModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -27,6 +25,7 @@ class PostModel(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     # belonged = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="user_images")
+    hash = models.CharField(max_length=256)
     image_url = models.CharField(max_length=255)
     caption = models.CharField(max_length=240)
     created_on = models.DateTimeField(auto_now_add=True)
