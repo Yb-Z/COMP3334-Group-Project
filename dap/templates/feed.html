@@ -2,13 +2,13 @@
 <div class="d-flex flex-column h-100 w-100">
   <div class="row py-4 justify-content-around align-items-stretch">
     {% for post in posts %}
-    <div class="col-10 col-md-6 col-lg-4 p-2">
+    <div class="col-12 p-2 {% if posts.count >= 4 %}col-xl-3 {% endif %}{% if posts.count >= 3 %}col-lg-4 {% endif %}{% if posts.count >= 2 %}col-md-6 {% endif %} ">
       <div class="card h-100">
         <img src="{{ post.image_url }}" class="card-img-top" />
         <div class="card-body">
-          <h5 class="card-title">{{ post.caption }}</h5>
+          <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
           <p class="card-text">
-            by <span class="text-primary">{{ post.user.name }}</span> at <span class="text-muted fw-light">{{ post.created_on }}</span>
+            by <a class="link-primary" href="/feed/uid/{{post.user.username}}">{{ post.user.username }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
           </p>
           <div class="row g-0">
             <span class="col-3">
@@ -45,7 +45,7 @@
           <ul class="list-group list-group-flush">
             {% for comment in post.comments %}
             <li class="list-group-item">
-              <span class="text-primary">{{ comment.user.username }}</span>
+              <a class="link-primary" href="/feed/uid/{{comment.user.username}}">{{ comment.user.username }}</a>
               <span class="text-muted fw-light">{{ comment.created_on }}:</span>
               <span class="{{ comment.has_upvoted }}">{{ comment.comment_text }}</span>
 

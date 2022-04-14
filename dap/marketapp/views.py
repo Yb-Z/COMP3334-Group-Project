@@ -180,7 +180,7 @@ def feed(request):
             existing_upvote = UpvoteModel.objects.filter(
                 comment_id=comment.id,
             ).first()
-            print(f"upvote: {existing_upvote}")
+            # print(f"upvote: {existing_upvote}")
             comment.has_upvoted = True if existing_upvote else False
     return render(request, "feed.html", {"posts": posts, "path": request.path})
 
@@ -314,28 +314,40 @@ def upvote(request):
             print("Form not valid")
             return redirect("/feed/")
 
-def func(request, username):
+def feed_by_user(request, username):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    
-    usern = UserModel.objects.all().filter(username=username)
-    print(usern)
-    posts = (
-        PostModel.objects.all().filter(user=usern).order_by("-created_on")
-    )
+    print(f"username: {username}")
+    usern = UserModel.objects.all().filter(username=username).first()
+    # print(usern)
+    posts = PostModel.objects.filter(user=usern).order_by("-created_on")
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        post.has_liked = True if existing_like else False
         comments = CommentModel.objects.filter(post_id=post.id)
-        if comments:
-            for comment in comments:
-                existing_upvote = UpvoteModel.objects.filter(
-                    comment=comment.id
-                ).first()
-
-                if existing_upvote:
-                    comment.has_upvoted = True
-        # If user has liked the post set the boolean value to True
-        if existing_like:
-            post.has_liked = True
+        for comment in comments:
+            existing_upvote = UpvoteModel.objects.filter(
+                comment_id=comment.id,
+            ).first()
+            # print(f"upvote: {existing_upvote}")
+            comment.has_upvoted = True if existing_upvote else False
     return render(request, "feed.html", {"posts": posts, "path": request.path})
+
+def feed_by_post(request, post_id):
+    user = check_validation(request)
+    if not user:
+        return redirect("/login/")
+    print(f"post_id: {post_id} {type(post_id)}")
+    post = PostModel.objects.all().get(id=eval(post_id))
+    if post:
+        existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
+        post.has_liked = True if existing_like else False
+        comments = CommentModel.objects.filter(post_id=post.id)
+        for comment in comments:
+            existing_upvote = UpvoteModel.objects.filter(
+                comment_id=comment.id,
+            ).first()
+            comment.has_upvoted = True if existing_upvote else False
+    print(post)
+    return render(request, "feed.html", {"posts": [post], "path": request.path})
