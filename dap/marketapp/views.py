@@ -1,9 +1,9 @@
 # request -> response / request handler / action
 import os
 import hashlib
-from datetime import datetime
 
 from django.contrib.auth.hashers import check_password, make_password
+from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
@@ -30,25 +30,27 @@ def welcome(request):
     
     return render(request, "dashboard.html", {"user": user, "path": request.path})
 
-# View to the home page
 def signup(request):
     user = check_validation(request)
-    if request.method == "POST":
+    if request.method != "POST":
+        if user:
+            return redirect("/feed/")
+        else:
+            signup_form = SignUpForm()
+            return render(request, "signup.html", {"signup_form": signup_form, "path": request.path})
+    else:
         signup_form = SignUpForm(request.POST)
-
         if signup_form.is_valid():
-            # Extract the details from the form
             username = signup_form.cleaned_data["username"]
             name = signup_form.cleaned_data["name"]
             email = signup_form.cleaned_data["email"]
             password = signup_form.cleaned_data["password"]
 
-            # Saving data to the database
             user = UserModel(
-                name=name,
-                password=make_password(password),
-                email=email,
-                username=username,
+                name = name,
+                password = make_password(password),
+                email = email,
+                username = username,
             )
             user.save()
 
@@ -60,88 +62,63 @@ def signup(request):
                 [email,],
                 fail_silently=False,
             )"""
-            # To prevent header injection https://docs.djangoproject.com/es/1.11/topics/email/#preventing-header-injection
-            # except BadHeaderError:
-            # return HttpResponse('Invalid header found')
-            # Show the success page
             return render(request, "success.html", {"path": request.path})
         else:
-            print("Error occured while signing up")
             return render(request, "signup.html", {"context": signup_form.errors, "path": request.path})
-    else:
-        exist_user = check_validation(request)
-        if exist_user:
-            redirect("/feed")
-        signup_form = SignUpForm()
-    return render(request, "signup.html", {"signup_form": signup_form, "path": request.path})
 
-# View for the login page
 def login(request):
     exist_user = check_validation(request)
     if exist_user:
-        redirect("/feed")
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            user = UserModel.objects.filter(username=username).first()
-            if user:
-                if check_password(password, user.password):
-                    # User is Valid
-                    print("Valid")
-                    token = SessionToken(user=user)
-                    token.create_token()
-                    token.save()
-                    response = redirect("/feed/")
-                    response.set_cookie(key="session_token", value=token.session_token)
-                    return response
-                else:
-                    # User is not valid
-                    print("Invalid User")
-                    return render(
-                        request,
-                        "login.html",
-                        {"context": "Your password is not correct! Try Again!", "path": request.path},
-                    )
-            else:
-                # User does not exist'
-                print("User doesnt exist")
-                return render(
-                    request, "login.html", {"context": "Username not registered", "path": request.path}
-                )
-        else:
-            # Form is not Valid
-            print("Invalid Form")
-            return render(
-                request,
-                "login.html",
-                {
-                    "context": "Could not log you in. Please fill all the fields correctly",
-                    "path": request.path
-                },
-            )
-    else:
+        redirect("/feed/")
+    if request.method != "POST":
         form = LoginForm()
-    return render(request, "login.html", {"path": request.path})
+        return render(request, "login.html", {"path": request.path})
+    
+    form = LoginForm(request.POST)
+    if not form.is_valid():
+        return render(
+            request,
+            "login.html",
+            {
+                "context": "Could not log you in. Please fill all the fields correctly",
+                "path": request.path
+            },
+        )
+    
+    username = form.cleaned_data.get("username")
+    password = form.cleaned_data.get("password")
+    user = UserModel.objects.filter(username=username).first()
+    if not user:
+        return render(
+            request, "login.html", {"context": "Username not registered", "path": request.path}
+        )
+    if not check_password(password, user.password):
+        return render(
+            request,
+            "login.html",
+            {"context": "Your password is not correct! Try Again!", "path": request.path},
+        )
+    
+    token = SessionToken(user=user)
+    token.create_token()
+    token.save()
+    response = redirect("/feed/")
+    response.set_cookie(key="session_token", value=token.session_token)
+    return response
 
 # Check if the current session is valid
-def check_validation(request): # TODO: Check this!
-    if request.COOKIES.get("session_token"):
-        session = SessionToken.objects.filter(
-            session_token=request.COOKIES.get("session_token")
-        ).first()
-        if session:
-            return session.user
-    else:
+def check_validation(request):
+    if not request.COOKIES.get("session_token"):
         return None
+    
+    session = SessionToken.objects.filter(
+        session_token=request.COOKIES.get("session_token")
+    ).first()
+    return session.user if session else None
 
-# Post View
 def post(request):
     user = check_validation(request)
-    if not user:
-        return redirect("/login/")
-    elif request.method not in ['GET', 'POST']:
+    if (not user) or (request.method not in ['GET', 'POST']):
         return redirect("/login/")
         
     if request.method == "GET":
@@ -149,31 +126,44 @@ def post(request):
         return render(request, "post-upload.html", {"form": form, "path": request.path})
     elif request.method == "POST":
         form = PostForm(request.POST, request.FILES)
-        if form.is_valid():
-            image = form.cleaned_data.get("image")
-            caption = form.cleaned_data.get("caption")
-            post = PostModel(user=user, image=image, caption=caption)
-            post.save()
-            path = f"{BASE_DIR}{post.image.url}"
-            with open(path, "rb") as f:
-                val = hashlib.sha256(f.read()).hexdigest()
-                if PostModel.objects.filter(hash=val).exists():
-                    post.delete()
-                    return render(request, "post-upload.html", {"form": form, "path": request.path, "context": "Image already exists"})
-                post.hash = val
-                # Upload to cloudinary API
-                uploaded = cloudinary.uploader.upload(path)
-                post.image_url = uploaded["secure_url"]
-                post.save()
-                return render(request, "post-success.html", {"post": post, "path": request.path})
+        if not form.is_valid():
+            return redirect("/post/")
 
-# Main feed View
+        # first save the image locally
+        image = form.cleaned_data.get("image")
+        caption = form.cleaned_data.get("caption")
+        post = PostModel(user=user, image=image, caption=caption)
+        post.save()
+        # check the validity of the image
+        path = f"{BASE_DIR}{post.image.url}"
+        with open(path, "rb") as f:
+            # hash the image and find hash duplication in the database
+            val = hashlib.sha256(f.read()).hexdigest()
+            if PostModel.objects.filter(hash=val).exists():
+                post.delete()
+                return render(request, "post-upload.html", {"form": form, "path": request.path, "context": "Image already exists"})
+            post.hash = val
+            # Upload to cloudinary API
+            uploaded = cloudinary.uploader.upload(path)
+            post.image_url = uploaded["secure_url"]
+            post.save()
+            return render(request, "post-success.html", {"post": post, "path": request.path})
+        
+
 def feed(request):
-    # Validates if the user is logged in or not
+    """
+    Get the posts of all the users
+    """
     user = check_validation(request)
     if not user:
         return redirect("/login/")
 
+    message = request.session.pop("form_message", [])
+    if ('Error' in message):
+        messages.error(request, message)
+    else:
+        messages.success(request, message)
+    
     posts = PostModel.objects.all().order_by("-created_on")
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
@@ -188,21 +178,25 @@ def feed(request):
     return render(request, "feed.html", {"posts": posts, "path": request.path})
 
 def manage(request):
-    # Validates if the user is logged in or not
+    """
+    Manage the posts of the user
+    """
     user = check_validation(request)
     if not user:
         return redirect("/login/")
     if request.method == "POST":
         return redirect("/manage/")
-
-    users = UserModel.objects.all().exclude(email=user.email)
+ 
     posts = PostModel.objects.filter(user=user).order_by("-created_on")
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
         post.has_liked = True if existing_like else False
-    return render(request, "manage.html", {"posts": posts, "users":users, "path": request.path})
+    return render(request, "manage.html", {"posts": posts, "path": request.path})
 
 def transfer(request):
+    """
+    Transfer the ownership of the post to another user
+    """
     user = check_validation(request)
     if not user:
         return redirect("/login/")
@@ -218,10 +212,12 @@ def transfer(request):
         print(f"{dest_email} {post_id} {dest_user}")
         PostModel.objects.filter(id=post_id).update(user=dest_user)
     
-    return redirect('/manage')
+    return redirect('/manage/')
 
-# Like view
 def like(request):
+    """
+    Like the post
+    """
     user = check_validation(request)
     if not user:
         return redirect("/login/")
@@ -229,29 +225,35 @@ def like(request):
         return redirect("/feed/")
     
     form = LikeForm(request.POST)
-    if form.is_valid():
-        post_id = form.cleaned_data.get("post").id
-        existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
-        # If user has already registered a like, then delete it
-        if existing_like:
-            existing_like.delete()
-        else:
-            # Otherwise create a like
-            post = LikeModel.objects.create(post_id=post_id, user=user)
-            # Send email if the one who liked was someone other than the
-            # one who posted the comment
-            if post.user.email != post.post.user.email:
-                send_mail(
-                    f"Updates to Your Artwork {post.post.caption}",
-                    f"Dear {post.post.user.name},\n\nYour Artwork {post.post.caption}: {post.post.image_url} is liked by buyer {post.user.name}: {post.user.email}.\nYou can check it out at dap.com.\n\nDAP",
-                    settings.EMAIL_HOST_USER,
-                    [post.post.user.email,],
-                    fail_silently=False,
-                )
+    if not form.is_valid():
         return redirect("/feed/")
+    
+    post_id = form.cleaned_data.get("post").id
+    existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
+    # If user has already registered a like, then delete it
+    if existing_like:
+        existing_like.delete()
+    else:
+        # Otherwise create a like
+        like = LikeModel.objects.create(post_id=post_id, user=user)
+        if like.user.email == like.post.user.email:
+            like.delete()
+            request.session['form_message'] = "Error: You cannot like your own post!"
+            return redirect("/feed")
+        else:
+            send_mail(
+                f"Updates to Your Artwork {like.post.caption}",
+                f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
+                settings.EMAIL_HOST_USER,
+                [like.post.user.email,],
+                fail_silently=False,
+            )
+    return redirect("/feed")
 
-# Comment View
 def comment(request):
+    """
+    Comment on the post
+    """
     user = check_validation(request)
     if not user:
         return redirect("/login")
@@ -275,9 +277,7 @@ def comment(request):
                     [comment.post.user.email],
                     fail_silently=False,
                 )"""
-            return redirect("/feed")
-        else:
-            return redirect("/feed/")
+        return redirect("/feed")
 
 # View to log the user out
 def logout(request):
@@ -287,33 +287,32 @@ def logout(request):
         response.delete_cookie(key="session_token")
         return response
     else:
-        return redirect("/feed/")
+        return redirect("/login/")
 
 # Upvote view
 def upvote(request):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    elif request.method == "POST":
+    if request.method == "POST":
         form = UpvoteForm(request.POST)
-        if form.is_valid():
-            comment_id = form.cleaned_data.get("comment").id
-            existing_upvote = UpvoteModel.objects.filter(
-                comment_id=comment_id, user=user
-            ).first()
-            # If user has already registered an upvote, then delete it
-            if existing_upvote:
-                existing_upvote.delete()
-            else:
-                # Otherwise create an upvote
-                post = UpvoteModel.objects.create(comment_id=comment_id, user=user)
-                print(post)
-                print((UpvoteModel.objects.filter(comment=comment_id)))
-                post.save()
+        if not form.is_valid():
             return redirect("/feed/")
+        comment_id = form.cleaned_data.get("comment").id
+        existing_upvote = UpvoteModel.objects.filter(
+            comment_id=comment_id, user=user
+        ).first()
+        # If user has already registered an upvote, then delete it
+        if existing_upvote:
+            existing_upvote.delete()
         else:
-            print("Form not valid")
-            return redirect("/feed/")
+            # Otherwise create an upvote
+            post = UpvoteModel.objects.create(comment_id=comment_id, user=user)
+            print(post)
+            print((UpvoteModel.objects.filter(comment=comment_id)))
+            post.save()
+        return redirect("/feed/")
+            
 
 def feed_by_user(request, name):
     user = check_validation(request)
@@ -338,7 +337,6 @@ def feed_by_post(request, post_id):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    print(f"post_id: {post_id} {type(post_id)}")
     post = PostModel.objects.all().get(id=eval(post_id))
     if post:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
@@ -349,5 +347,4 @@ def feed_by_post(request, post_id):
                 comment_id=comment.id,
             ).first()
             comment.has_upvoted = True if existing_upvote else False
-    print(post)
     return render(request, "feed.html", {"posts": [post], "path": request.path})

@@ -42,7 +42,8 @@ class PostModel(models.Model):
 class LikeModel(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
-    post = models.ForeignKey(PostModel, on_delete=models.CASCADE)
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name="likes")
+    authorAgreed = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 

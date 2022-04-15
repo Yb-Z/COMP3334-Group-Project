@@ -130,3 +130,15 @@ STATIC_URL = '/static/'
 TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.request',
 ]
+
+import os
+from django.contrib import messages
+
+
+MESSAGE_TAGS = {
+    messages.constants.DEBUG: 'alert-secondary',
+    messages.constants.INFO: 'alert-info',
+    messages.constants.SUCCESS: 'alert-success',
+    messages.constants.WARNING: 'alert-warning',
+    messages.constants.ERROR: 'alert-danger',
+ }

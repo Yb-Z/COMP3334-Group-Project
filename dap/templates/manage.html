@@ -22,9 +22,14 @@
                     id="user"
                     aria-label="Select Recipient"
                   >
-                    {% for dest_user in users %}
+                    {% comment %} {% for dest_user in users %}
                     <option value="{{ dest_user.email }}">
                       {{dest_user.name}}: {{ dest_user.email }}
+                    </option>
+                    {% endfor %} {% endcomment %}
+                    {% for dest_user in post.likes.all %}
+                    <option value="{{ dest_user.user.email }}">
+                      {{dest_user.user.name}}: {{ dest_user.user.email }}
                     </option>
                     {% endfor %}
                   </select>
