@@ -1,53 +1,9 @@
 {% extends 'base-auth.html' %} {% block content %} {% if posts %}
 <div class="d-flex flex-column h-100 w-100">
   <div class="row py-4 justify-content-around align-items-stretch">
+    {% include 'snippets/messages.html' %}
     {% for post in posts %}
-    <div class="col-12 p-2 {% if posts.count >= 4 %}col-xl-3 {% endif %}{% if posts.count >= 3 %}col-lg-4 {% endif %}{% if posts.count >= 2 %}col-md-6 {% endif %} ">
-      <div class="card h-100">
-        <img src="{{ post.image_url }}" class="card-img-top" />
-        <div class="card-body my-auto">
-          <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
-          <p class="card-text">
-            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
-          </p>
-          <div class="row g-0">
-            <span class="col-12">
-              <form method="POST" action="/transfer/" class="d-inline">
-                {% csrf_token %}
-                <input type="hidden" name="id" value="{{ post.id }}" />
-                <div class="input-group">
-                  <select
-                    class="form-select"
-                    name="user"
-                    id="user"
-                    aria-label="Select Recipient"
-                  >
-                    {% comment %} {% for dest_user in users %}
-                    <option value="{{ dest_user.email }}">
-                      {{dest_user.name}}: {{ dest_user.email }}
-                    </option>
-                    {% endfor %} {% endcomment %}
-                    {% for dest_user in post.likes.all %}
-                    <option value="{{ dest_user.user.email }}">
-                      {{dest_user.user.name}}: {{ dest_user.user.email }}
-                    </option>
-                    {% endfor %}
-                  </select>
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="submit"
-                    name="submit"
-                    value="Transfer"
-                  >
-                    <i class="fa-solid fa-arrow-right-arrow-left" aria-hidden="true"></i>
-                  </button>
-                </div>
-              </form>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+      {% include 'snippets/post_list.html' with interaction='snippets/post_transfer.html' post=post %}
     {% endfor %}
   </div>
 </div>

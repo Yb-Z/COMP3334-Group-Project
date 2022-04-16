@@ -87,7 +87,7 @@ DATABASES = {
     }
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 SERVER_EMAIL = os.getenv("EMAIL_HOST_USER")
@@ -141,4 +141,7 @@ MESSAGE_TAGS = {
     messages.constants.SUCCESS: 'alert-success',
     messages.constants.WARNING: 'alert-warning',
     messages.constants.ERROR: 'alert-danger',
- }
+}
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"

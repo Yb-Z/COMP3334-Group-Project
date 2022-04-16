@@ -58,3 +58,8 @@ class UpvoteForm(forms.ModelForm):
     class Meta:
         model = UpvoteModel
         fields = ['comment']
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = TransactionModel
+        fields = ['post']

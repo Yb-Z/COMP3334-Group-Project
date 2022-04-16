@@ -1,80 +1,9 @@
 {% extends 'base-auth.html' %} {% block content %}
 <div class="d-flex flex-column h-100 w-100">
   <div class="row py-4 justify-content-around align-items-stretch">
-    {% for message in messages %}
-    <div class="col-12 p-2">
-      <div class="alert {% if message.tags %}{{ message.tags }}{% endif %}" role="alert">{{ message }}</div>
-    </div>
-    {% endfor %}
+    {% include 'snippets/messages.html' %}
     {% for post in posts %}
-    <div class="col-12 p-2 {% if posts.count >= 4 %}col-xl-3 {% endif %}{% if posts.count >= 3 %}col-lg-4 {% endif %}{% if posts.count >= 2 %}col-md-6 {% endif %} ">
-      <div class="card h-100">
-        <img src="{{ post.image_url }}" class="card-img-top" />
-        <div class="card-body">
-          <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
-          <p class="card-text">
-            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
-          </p>
-          <div class="row g-0">
-            <span class="col-3">
-              <form method="post" action="/like/" id="like" class="d-inline">
-                {% csrf_token %}
-                <input type="hidden" name="post" value="{{ post.id }}" />
-                {% if post.has_liked %}
-                <button class="btn btn-light w-100">
-                  <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
-                  {{ post.like_count }}
-                </button>
-                {% else %}
-                <button class="btn btn-info w-100">
-                  <i class="fa-solid fa-shopping-cart" aria-hidden="true"></i>
-                  {{ post.like_count }}
-                </button>
-                {% endif %}
-              </form>
-            </span>
-            <span class="col-9 ps-2">
-              <form method="POST" action="/comment/" class="d-inline">
-                {% csrf_token %}
-                <input type="hidden" name="post" value="{{ post.id }}" />
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" name="comment_text" aria-describedby="comment"
-                    aria-label="Comment Text" />
-                  <button class="btn btn-outline-secondary" type="submit">
-                    <i class="fa-solid fa-comment" aria-hidden="true"></i>
-                  </button>
-                </div>
-              </form>
-            </span>
-          </div>
-          <ul class="list-group list-group-flush">
-            {% for comment in post.comments %}
-            <li class="list-group-item">
-              <a class="link-primary text-decoration-none" href="/feed/uid/{{comment.user.name}}">{{ comment.user.name }}</a>
-              <span class="text-muted fw-light">{{ comment.created_on }}:</span>
-              <span class="{{ comment.has_upvoted }}">{{ comment.comment_text }}</span>
-
-              <form method="post" action="/upvote/" class="d-inline float-end">
-                {% csrf_token %}
-                <input type="hidden" name="comment" value="{{ comment.id }}" />
-                {% if comment.has_upvoted %}
-                <button class="btn btn-sm btn-outline-light" type="submit">
-                  <i class="fa-solid fa-heart" aria-hidden="true"></i>
-                  {{ comment.upvote_count }}
-                </button>
-                {% else %}
-                <button class="btn btn-sm btn-outline-primary" type="submit">
-                  <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i>
-                  {{ comment.upvote_count }}
-                </button>
-                {% endif %}
-              </form>
-            </li>
-            {% endfor %}
-          </ul>
-        </div>
-      </div>
-    </div>
+      {% include 'snippets/post.html' with post=post %}
     {% endfor %}
   </div>
 </div>

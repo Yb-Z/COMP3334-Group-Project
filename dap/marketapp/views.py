@@ -28,7 +28,7 @@ def welcome(request):
     if not user:
         return render(request, "welcome.html", {"path": request.path})
     
-    return render(request, "dashboard.html", {"user": user, "path": request.path})
+    return render(request, "dashboard.html", {"userinfo": user, "path": request.path})
 
 def signup(request):
     user = check_validation(request)
@@ -158,11 +158,9 @@ def feed(request):
     if not user:
         return redirect("/login/")
 
-    message = request.session.pop("form_message", [])
-    if ('Error' in message):
-        messages.error(request, message)
-    else:
-        messages.success(request, message)
+    msg = request.session.pop("form_message", {})
+    if msg:
+        messages.add_message(request, msg.get("level", messages.INFO), msg.get("text", "default message"))
     
     posts = PostModel.objects.all().order_by("-created_on")
     for post in posts:
@@ -173,7 +171,6 @@ def feed(request):
             existing_upvote = UpvoteModel.objects.filter(
                 comment_id=comment.id,
             ).first()
-            # print(f"upvote: {existing_upvote}")
             comment.has_upvoted = True if existing_upvote else False
     return render(request, "feed.html", {"posts": posts, "path": request.path})
 
@@ -187,6 +184,10 @@ def manage(request):
     if request.method == "POST":
         return redirect("/manage/")
  
+    msg = request.session.pop("form_message", {})
+    if msg:
+        messages.add_message(request, msg.get("level", messages.INFO), msg.get("text", "default message"))
+        
     posts = PostModel.objects.filter(user=user).order_by("-created_on")
     for post in posts:
         existing_like = LikeModel.objects.filter(post_id=post.id, user=user).first()
@@ -195,7 +196,8 @@ def manage(request):
 
 def transfer(request):
     """
-    Transfer the ownership of the post to another user
+    Owner approves the transfer of the artwork
+    Create a new trasaction, awaiting buyer payment
     """
     user = check_validation(request)
     if not user:
@@ -203,16 +205,88 @@ def transfer(request):
     elif request.method != "POST":
         return redirect("/feed/")
     
-    form = TransferForm(request.POST)
-    print(f"form: {form.is_valid()}, req: {request.POST}")
-    if form.is_valid():
-        dest_email = form.data.get("user")
-        post_id = form.data.get("id")
-        dest_user = UserModel.objects.get(email=dest_email)
-        print(f"{dest_email} {post_id} {dest_user}")
-        PostModel.objects.filter(id=post_id).update(user=dest_user)
+    request.session['form_message'] = {
+        "level": messages.ERROR,
+        "text": "Error: Failed to approve the request!"
+    }
     
+    form = TransferForm(request.POST)
+    if form.is_valid():
+        # a transfer request, 
+        # from the current user (as transaction sender) 
+        # to the post author (as transaction receiver)
+        sender_id = form.data.get("user")
+        post_id = form.data.get("id")
+        like = LikeModel.objects.filter(post_id=post_id, user_id=sender_id).first()
+        if like.confirmed:
+            request.session['form_message'] = {
+                "level": messages.ERROR,
+                "text": f"Error: You have already approved the request to buyer {sender_id}!"
+            }
+            return redirect('/manage/')
+            
+        print(f"auth: {user.id == sender_id}, where {user.id}, {sender_id}, {post_id}")
+        sender = UserModel.objects.get(id=sender_id)
+        post = PostModel.objects.get(id=post_id)
+        existed = TransactionModel.objects.filter(post=post, sender=sender, receiver=post.user, completed=False)
+        if existed:
+            request.session['form_message'] = {
+                "level": messages.ERROR,
+                "text": f"Error: You have already approved the request to buyer {sender_id}!"
+            }
+            return redirect('/manage/')
+        TransactionModel.objects.create(post=post, sender=sender, receiver=post.user)
+        like.confirmed = True
+        like.save()
+        request.session['form_message'] = {
+            "level": messages.SUCCESS,
+            "text": "Success: request approved!"
+        }
     return redirect('/manage/')
+
+def transact(request):
+    """
+    Get the transactions of the user
+    """
+    user = check_validation(request)
+    if not user:
+        return redirect("/login/")
+    if request.method not in ["GET", "POST"]:
+        return redirect("/feed/")
+    if request.method == "GET":
+        msg = request.session.pop("form_message", {})
+        if msg:
+            messages.add_message(request, msg.get("level", messages.INFO), msg.get("text", "default message"))
+        transactions = user.as_sender.all() | user.as_receiver.all()
+        return render(request, "transact.html", {"transactions": transactions, "userinfo": user, "path": request.path})
+    else:
+        form = TransactionForm(request.POST)
+        # sender is the current user
+        # receiver is the current post author
+        print(f"flag: {form.is_valid()}, form: {form}, req: {request.POST}")
+        request.session['form_message'] = {
+            "level": messages.ERROR,
+            "text": "Error: failed to transact! [form invalid]"
+        }
+        if form.is_valid():
+            post = form.cleaned_data.get("post")
+            transaction = TransactionModel.objects.filter(post=post, sender=user, completed=False).first()
+            request.session['form_message']['text'] = "Error: failed to transact! [no such transaction]"
+            if transaction:
+                # transfer the ownership of the post to the receiver
+                transaction.confirmed = True
+                transaction.save()
+                post.user = user
+                post.save()
+                # mark the like as completed
+                like = LikeModel.objects.filter(post=post, user=user).first()
+                if like:
+                    like.delete()
+                request.session['form_message'] = {
+                    "level": messages.SUCCESS,
+                    "text": "Success: transaction completed!"
+                }
+        return redirect("/transact/")
 
 def like(request):
     """
@@ -229,25 +303,36 @@ def like(request):
         return redirect("/feed/")
     
     post_id = form.cleaned_data.get("post").id
+    post = PostModel.objects.get(id=post_id)
+    if post.user == user:
+        request.session['form_message'] = {
+            "level": messages.ERROR,
+            "text": "Error: You cannot request your own post!"
+        }
+        return redirect("/feed")
+        
     existing_like = LikeModel.objects.filter(post_id=post_id, user=user).first()
     # If user has already registered a like, then delete it
     if existing_like:
         existing_like.delete()
+        request.session['form_message'] = {
+            "level": messages.SUCCESS,
+            "text": "Success: You have deleted the request!"
+        }
     else:
         # Otherwise create a like
         like = LikeModel.objects.create(post_id=post_id, user=user)
-        if like.user.email == like.post.user.email:
-            like.delete()
-            request.session['form_message'] = "Error: You cannot like your own post!"
-            return redirect("/feed")
-        else:
-            send_mail(
-                f"Updates to Your Artwork {like.post.caption}",
-                f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
-                settings.EMAIL_HOST_USER,
-                [like.post.user.email,],
-                fail_silently=False,
-            )
+        send_mail(
+            f"Updates to Your Artwork {like.post.caption}",
+            f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
+            settings.EMAIL_HOST_USER,
+            [like.post.user.email,],
+            fail_silently=False,
+        )
+        request.session['form_message'] = {
+            "level": messages.SUCCESS,
+            "text": "Success: You have sent the request, please wait for author's response!"
+        }
     return redirect("/feed")
 
 def comment(request):

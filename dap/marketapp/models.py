@@ -43,7 +43,7 @@ class LikeModel(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name="likes")
-    authorAgreed = models.BooleanField(default=False)
+    confirmed = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
 
@@ -65,5 +65,22 @@ class UpvoteModel(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     comment = models.ForeignKey(CommentModel, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+
+class TransactionModel(models.Model):
+    # A wants to buy B's post
+    # A sends a request
+    # B approves the request
+    # A start a transaction 
+    # system completes the ownership transfer
+    id = models.AutoField(primary_key=True)
+    post = models.ForeignKey(PostModel, on_delete=models.CASCADE, related_name="transactions")
+    # A is the sender
+    sender = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="as_sender")
+    # B is the receiver
+    receiver = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="as_receiver")
+    amount = models.IntegerField(default=0)
+    completed = models.BooleanField(default=False)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)

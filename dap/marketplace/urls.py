@@ -23,6 +23,7 @@ urlpatterns = [
     re_path(r'^__debug__/', include(debug_toolbar.urls)),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^$', welcome),
+    # re_path(r'^', include('django.contrib.auth.urls')),
     re_path(r'^register/$', signup),
     re_path(r'^login/$',login),
     re_path(r'^post/$',post),
@@ -35,4 +36,5 @@ urlpatterns = [
     re_path(r'^manage/$', manage),
     re_path(r'^transfer/$', transfer),
     re_path(r'^logout/$', logout),
+    re_path(r'^transact/$', transact),
 ]
