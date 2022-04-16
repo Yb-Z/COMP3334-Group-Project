@@ -1,0 +1,18 @@
+<div class="col-12 p-2 {% if posts.count >= 2 %}col-xl-6 {% endif %} ">
+  <div class="card h-100">
+    <div class="row g-0 h-100">
+      <div class="col-md-4 d-flex justify-content-center align-items-center">
+        <img src="{{ post.image_url }}" class="img-fluid rounded-start" alt="..." />
+      </div>
+      <div class="col-md-8 d-flex justify-content-center align-items-center">
+        <div class="card-body">
+          <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
+          <p class="card-text">
+            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.first_name}}">{{ post.user.first_name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
+          </p>
+          {% include interaction|default:"snippets/post_interaction.html" %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

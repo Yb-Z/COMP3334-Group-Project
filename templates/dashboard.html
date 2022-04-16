@@ -1,0 +1,80 @@
+{% extends 'base-auth.html' %} {% block content %}
+<div class="d-flex flex-column justify-content-center align-items-center h-100 w-100">
+  <h1 class="mb-4 text-center">
+    Digital Art Platform
+  </h1>
+  <div class="row w-100 justify-content-center align-items-center">
+    <div class="col-12 col-md-9 col-lg-6">
+      <form method="post" id="signup" class="w-100">
+        {% csrf_token %}
+        <div class="input-group mb-3 w-100">
+          <span
+            class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+            id="username-label"
+            >Username</span
+          >
+          <input
+            id="username"
+            type="text"
+            name="username"
+            maxlength="120"
+            required=""
+            class="form-control"
+            aria-label="username input"
+            aria-describedby="username-label"
+            value="{{userinfo.username}}"
+            readonly
+          />
+        </div>
+        <div class="input-group mb-3 w-100">
+          <span
+            class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+            id="name-label"
+            >Name</span
+          >
+          <input
+            id="name"
+            type="text"
+            name="name"
+            maxlength="120"
+            required=""
+            class="form-control"
+            aria-label="name input"
+            aria-describedby="name-label"
+            value="{{userinfo.name}}"
+            readonly
+          />
+        </div>
+        <div class="input-group mb-3 w-100">
+          <span
+            class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+            id="email-label"
+            >Email</span
+          >
+          <input
+            id="email"
+            type="text"
+            name="email"
+            maxlength="254"
+            required=""
+            class="form-control"
+            aria-label="email input"
+            aria-describedby="email-label"
+            value="{{userinfo.email}}"
+            readonly
+          />
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="text-center">
+    <a href="/feed" class="btn btn-dark">
+      My Feed<i class="fa-solid fa-paper-plane ms-1" aria-hidden="true"></i>
+    </a>
+    <a href="/post" class="btn btn-info ms-2">
+      New Post<i class="fa-solid fa-plus-circle ms-1" aria-hidden="true"></i>
+    </a>
+  </div>
+</div>
+
+{% endblock content %}

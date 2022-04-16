@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome</title>
+    {% include 'snippets/css.html' %}
+  </head>
+  <body class="text-info">
+    {% block nav %}
+    {% include 'snippets/nav.html' %}
+    {% endblock nav %}
+    {% comment %} <img
+      src="https://res.cloudinary.com/moenupa/image/upload/v1649776500/theme_tyl4gd.jpg"
+      class="img-fluid vh-100 vw-100 position-fixed" style="filter: blur(4px); z-index: -1;"
+    /> {% endcomment %}
+    <div
+      style="
+        background: center / cover no-repeat
+          url('https://res.cloudinary.com/moenupa/image/upload/v1649776500/theme_tyl4gd.jpg');
+        filter: blur(4px);
+        z-index: -1;
+      "
+      class="vh-100 vw-100 position-fixed z"
+    ></div>
+
+    <main
+      class="container vh-100"
+      style="margin-top: -56px; padding-top: 56px; padding-bottom: 32px"
+    >
+      <div
+        class="d-flex flex-column align-items-center justify-content-center h-100"
+      >
+        {% block content %}{% endblock content %}
+      </div>
+    </main>
+
+    {% include 'snippets/footer.html'%}
+  </body>
+  {% include 'snippets/scripts.html' %}
+</html>

@@ -1,0 +1,12 @@
+<div class="col-12 p-2 {% if posts.count >= 3 %}col-xl-4 {% endif %}{% if posts.count >= 2 %}col-lg-6 {% endif %} ">
+  <div class="card h-100">
+    <img src="{{ post.image_url }}" class="card-img-top" />
+    <div class="card-body">
+      <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
+      <p class="card-text">
+        by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.first_name}}">{{ post.user.first_name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
+      </p>
+      {% include interaction|default:"snippets/post_interaction.html" %}
+    </div>
+  </div>
+</div>

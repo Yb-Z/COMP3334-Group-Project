@@ -1,0 +1,92 @@
+{% extends 'base-auth.html' %} {% block content %}
+
+<div class="row">
+  <div class="col-75">
+    <div class="container">
+      <form action="/action_page.php">
+
+        <div class="row">
+          <h3></h3>
+          <h3></h3>
+          <h3></h3>
+          <div class="col-50">
+            {% comment %} <div class="container"> {% endcomment %}
+              <h3>Cart 
+                <span class="price" style="color:black">
+                  <i class="fa fa-shopping-cart"></i> 
+                  {% comment %} <b>4</b> {% endcomment %}
+                </span>
+              </h3>
+              <p><a href="#">Digital Art 1</a> <span class="price">Price: $100</span></p>
+              {% comment %} <hr>
+              <p>Total <span class="price" style="color:black"><b>$30</b></span></p> {% endcomment %}
+            {% comment %} </div> {% endcomment %}
+          </div>
+
+          <div class="col-50">
+            <h3>Billing Address</h3>
+            <label for="fname"><i class="fa fa-user"></i> Full Name</label>
+            <input class="form-control" type="text" id="fname" name="firstname" placeholder="John M. Doe">
+            <label for="email"><i class="fa fa-envelope"></i> Email</label>
+            <input class="form-control" type="text" id="email" name="email" placeholder="john@example.com">
+            <label for="adr"><i class="fa fa-address-card-o"></i> Address</label>
+            <input class="form-control" type="text" id="adr" name="address" placeholder="542 W. 15th Street">
+            <label for="city"><i class="fa fa-institution"></i> City</label>
+            <input class="form-control" type="text" id="city" name="city" placeholder="New York">
+
+            <div class="row">
+              <div class="col-50">
+                <label for="state">State</label>
+                <input class="form-control" type="text" id="state" name="state" placeholder="NY">
+              </div>
+              <div class="col-50">
+                <label for="zip">Zip</label>
+                <input class="form-control" type="text" id="zip" name="zip" placeholder="10001">
+              </div>
+            </div>
+          </div>
+          <h3></h3>
+          <h3></h3>
+          <h3></h3>
+          <div class="col-50">
+            <h3>Payment</h3>
+            <label for="fname">Accepted Cards</label>
+            <div class="icon-container">
+              <i class="fa fa-cc-visa" style="color:navy;"></i>
+              <i class="fa fa-cc-amex" style="color:blue;"></i>
+              <i class="fa fa-cc-mastercard" style="color:red;"></i>
+              <i class="fa fa-cc-discover" style="color:orange;"></i>
+            </div>
+            <label for="cname">Name on Card</label>
+            <input class="form-control" type="text" id="cname" name="cardname" placeholder="John More Doe">
+            <label for="ccnum">Credit card number</label>
+            <input class="form-control" type="text" id="ccnum" name="cardnumber" placeholder="1111-2222-3333-4444">
+            <label for="expmonth">Exp Month</label>
+            <input class="form-control" type="text" id="expmonth" name="expmonth" placeholder="September">
+
+            <div class="row">
+              <div class="col-50">
+                <label for="expyear">Exp Year</label>
+                <input class="form-control" type="text" id="expyear" name="expyear" placeholder="2018">
+              </div>
+              <div class="col-50">
+                <label for="cvv">CVV</label>
+                <input class="form-control" type="text" id="cvv" name="cvv" placeholder="352">
+              </div>
+            </div>
+          </div>
+
+        </div>
+        {% comment %} <label>
+          <input class="form-control" type="checkbox" checked="checked" name="sameadr"> Shipping address same as billing
+        </label> {% endcomment %}
+        <br>
+        <input type="submit" value="Continue to checkout" class="btn btn-primary float-right">
+      </form>
+    </div>
+  </div>
+  <h3></h3>
+  <h3></h3>
+  <h3></h3>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome</title>
+    {% include 'snippets/css.html' %}
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"
+    ></script>
+  </head>
+  <body>
+    {% include 'snippets/nav-auth.html' %}
+    <main class="container vh-100" style="margin-top: -56px; padding-top: 56px;">
+      <div
+        class="d-flex flex-column align-items-center h-100 w-100"
+      >
+      {% load cloudinary %} {% block content %} {% endblock content %}
+      </div>
+    </main>
+  </body>
+  {% include 'snippets/scripts.html' %}
+</html>
