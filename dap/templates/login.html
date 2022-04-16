@@ -1,0 +1,52 @@
+{% extends 'base.html' %} {% block content %}
+
+<h1 class="mb-4 text-center" style="text-shadow: 2px 2px 6px black">Welcome to Digital Art Platform</h1>
+<div class="row w-100 justify-content-center align-items-center">
+  <div class="col-12 col-md-9 col-lg-6">
+    <form method="post" id="login" class="w-100">
+      {% csrf_token %} 
+      {% if context %}
+      <div class="alert alert-danger" role="alert">{{ context }}</div>
+      {% endif %}
+      <div class="input-group mb-3 w-100">
+        <span
+          class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+          id="username-label"
+          >Username</span
+        >
+        <input
+          id="username"
+          type="text"
+          name="username"
+          class="form-control"
+          aria-label="username input"
+          aria-describedby="username-label"
+        />
+      </div>
+      
+      <div class="input-group mb-3 w-100">
+        <span
+          class="input-group-text w-25 px-2 d-inline-flex justify-content-center"
+          id="password-label"
+          >Password</span
+        >
+        <input
+          id="password"
+          type="password"
+          name="password"
+          class="form-control"
+          aria-label="password input"
+          aria-describedby="password-label"
+        />
+      </div>
+    </form>
+  </div>
+</div>
+<div class="text-center">
+  <button type="submit" form="login" value="Submit" class="btn btn-info">
+    <i class="fa-solid fa-right-to-bracket me-1" aria-hidden="true"></i>
+    Login
+  </button>
+</div>
+
+{% endblock content %}

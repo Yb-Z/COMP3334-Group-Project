@@ -1,0 +1,66 @@
+<div class="row">
+  <div class="col-3">
+    <form method="post" action="/like/" id="like" class="d-inline">
+      {% csrf_token %}
+      <input type="hidden" name="post" value="{{ post.id }}" />
+      {% if post.has_liked %}
+      <button class="btn btn-light w-100">
+        <i class="fa-solid fa-trash-alt" aria-hidden="true"></i>
+        {{ post.like_count }}
+      </button>
+      {% else %}
+      <button class="btn btn-info w-100">
+        <i class="fa-solid fa-shopping-cart" aria-hidden="true"></i>
+        {{ post.like_count }}
+      </button>
+      {% endif %}
+    </form>
+  </div>
+  <div class="col-9">
+    <form method="POST" action="/comment/" class="d-inline">
+      {% csrf_token %}
+      <input type="hidden" name="post" value="{{ post.id }}" />
+      <div class="input-group mb-3">
+        <input
+          type="text"
+          class="form-control"
+          name="comment_text"
+          aria-describedby="comment"
+          aria-label="Comment Text"
+        />
+        <button class="btn btn-outline-primary" type="submit">
+          <i class="fa-solid fa-comment" aria-hidden="true"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+<ul class="list-group list-group-flush">
+  {% for comment in post.comments %}
+  <li class="list-group-item">
+    <a
+      class="link-primary text-decoration-none"
+      href="/feed/uid/{{comment.user.name}}"
+      >{{ comment.user.name }}</a
+    >
+    <span class="text-muted fw-light">{{ comment.created_on }}:</span>
+    <span class="{{ comment.has_upvoted }}">{{ comment.comment_text }}</span>
+
+    <form method="post" action="/upvote/" class="d-inline float-end">
+      {% csrf_token %}
+      <input type="hidden" name="comment" value="{{ comment.id }}" />
+      {% if comment.has_upvoted %}
+      <button class="btn btn-sm btn-outline-light" type="submit">
+        <i class="fa-solid fa-heart" aria-hidden="true"></i>
+        {{ comment.upvote_count }}
+      </button>
+      {% else %}
+      <button class="btn btn-sm btn-outline-primary" type="submit">
+        <i class="fa-solid fa-thumbs-up" aria-hidden="true"></i>
+        {{ comment.upvote_count }}
+      </button>
+      {% endif %}
+    </form>
+  </li>
+  {% endfor %}
+</ul>

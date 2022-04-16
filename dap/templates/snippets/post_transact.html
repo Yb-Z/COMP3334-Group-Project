@@ -1,0 +1,31 @@
+<div class="row g-0">
+  <span class="col-12">
+    <form method="POST" action="/transact/" class="d-inline">
+      {% csrf_token %}
+      <input type="hidden" name="post" value="{{ post.id }}" />
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-user-clock" aria-hidden="true"></i></span>
+        <input type="text" class="form-control" value="{{transaction.sender.name}}" readonly>
+        <span class="input-group-text"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
+        <span class="input-group-text"><i class="fa-solid fa-user-pen" aria-hidden="true"></i></span>
+        <input type="text" class="form-control" value="{{transaction.receiver.name}}" readonly>
+        <button
+          class="btn w-25 text-capitalize {% if transaction.completed %}btn-success{% elif userinfo.id == transaction.sender.id %}btn-primary{% elif userinfo.id != transaction.sender.id %}btn-secondary{% endif %}"
+          type="submit"
+          name="submit"
+          value="transact"
+          {% if transaction.completed or userinfo.id != transaction.sender.id %}disabled{% endif %}
+        >
+          <i class="fa-solid fa-dollar-sign" aria-hidden="true"></i>
+          {% if transaction.completed %}
+          success
+          {% elif userinfo.id == transaction.sender.id %}
+          confirm
+          {% elif userinfo.id != transaction.sender.id %}
+          pending
+          {% endif %}
+        </button>
+      </div>
+    </form>
+  </span>
+</div>
