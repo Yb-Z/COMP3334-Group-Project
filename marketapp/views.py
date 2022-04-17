@@ -138,7 +138,7 @@ def post(request):
         post = PostModel(user=user, image=image, caption=caption)
         post.save()
         # check the validity of the image
-        path = f"{BASE_DIR}{post.image.url}"
+        path = os.path.join(BASE_DIR, post.image.url[1:])
         with open(path, "rb") as f:
             # hash the image and find hash duplication in the database
             val = hashlib.sha256(f.read()).hexdigest()
@@ -218,24 +218,24 @@ def transfer(request):
         # a transfer request, 
         # from the current user (as transaction sender) 
         # to the post author (as transaction receiver)
-        sender_username = form.data.get("user")
+        sender_id = form.data.get("user")
         post_id = form.data.get("id")
-        like = LikeModel.objects.filter(post_id=post_id, username=sender_username).first()
+        like = LikeModel.objects.filter(post_id=post_id, user_id=sender_id).first()
         if like.confirmed:
             request.session['form_message'] = {
                 "level": messages.ERROR,
-                "text": f"Error: You have already approved the request to buyer {sender_username}!"
+                "text": f"Error: You have already approved the request to buyer {sender_id}!"
             }
             return redirect('/manage/')
             
-        print(f"auth: {user.username == sender_username}, where {user.username}, {sender_username}, {post_id}")
-        sender = User.objects.get(username=sender_username)
+        print(f"auth: {user.id == sender_id}, where {user.id}, {sender_id}, {post_id}")
+        sender = User.objects.get(id=sender_id)
         post = PostModel.objects.get(id=post_id)
         existed = TransactionModel.objects.filter(post=post, sender=sender, receiver=post.user, completed=False)
         if existed:
             request.session['form_message'] = {
                 "level": messages.ERROR,
-                "text": f"Error: You have already approved the request to buyer {sender_username}!"
+                "text": f"Error: You have already approved the request to buyer {sender_id}!"
             }
             return redirect('/manage/')
         TransactionModel.objects.create(post=post, sender=sender, receiver=post.user)
