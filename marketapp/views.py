@@ -325,7 +325,7 @@ def like(request):
         like = LikeModel.objects.create(post_id=post_id, user=user)
         send_mail(
             f"Updates to Your Artwork {like.post.caption}",
-            f"Dear {like.post.user.first_name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.first_name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
+            get_pgp_string(f"Dear {like.post.user.first_name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.first_name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP"),
             settings.EMAIL_HOST_USER,
             [like.post.user.email,],
             fail_silently=False,
