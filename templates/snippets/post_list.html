@@ -8,7 +8,7 @@
         <div class="card-body">
           <a class="card-title fs-4 text-dark text-decoration-none" href="/feed/pid/{{post.id}}">{{ post.caption }}</a>
           <p class="card-text">
-            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.name}}">{{ post.user.name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
+            by <a class="link-primary text-decoration-none" href="/feed/uid/{{post.user.username}}">{{ post.user.first_name }}</a> at <span class="text-muted fw-light">{{ post.created_on }}</span>
           </p>
           {% include interaction|default:"snippets/post_interaction.html" %}
         </div>

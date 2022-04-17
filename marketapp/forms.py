@@ -1,11 +1,12 @@
+from curses.ascii import US
 from django.core.exceptions import ValidationError
 from django import forms
 from .models import *
 
 class SignUpForm(forms.ModelForm):
     class Meta:
-        model = UserModel
-        fields = ['name','username','email','password']
+        model = User
+        fields = ['first_name','username','email','password']
             
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -45,7 +46,7 @@ class TransferForm(forms.Form):
         fields = ['id', 'user']
     
     user = forms.ModelChoiceField(
-        queryset=UserModel.objects.all(),
+        queryset=User.objects.all(),
         widget=forms.CheckboxInput
     )
 

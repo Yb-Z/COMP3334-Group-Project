@@ -5,10 +5,10 @@
       <input type="hidden" name="post" value="{{ post.id }}" />
       <div class="input-group">
         <span class="input-group-text"><i class="fa-solid fa-user-clock" aria-hidden="true"></i></span>
-        <input type="text" class="form-control" value="{{transaction.sender.name}}" readonly>
+        <input type="text" class="form-control" value="{{transaction.sender.email}}" readonly>
         <span class="input-group-text"><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></span>
         <span class="input-group-text"><i class="fa-solid fa-user-pen" aria-hidden="true"></i></span>
-        <input type="text" class="form-control" value="{{transaction.receiver.name}}" readonly>
+        <input type="text" class="form-control" value="{{transaction.receiver.email}}" readonly>
         <button
           class="btn w-25 text-capitalize {% if transaction.completed %}btn-success{% elif userinfo.id == transaction.sender.id %}btn-primary{% elif userinfo.id != transaction.sender.id %}btn-secondary{% endif %}"
           type="submit"

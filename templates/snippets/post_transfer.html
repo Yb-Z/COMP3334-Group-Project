@@ -13,7 +13,7 @@
         >
           {% for dest_user in post.likes.all %}
           <option value="{{ dest_user.user.id }}">
-            {{dest_user.user.name}}: {{ dest_user.user.email }}
+            {{dest_user.user.username}}: {{ dest_user.user.email }}
           </option>
           {% endfor %}
         </select>
