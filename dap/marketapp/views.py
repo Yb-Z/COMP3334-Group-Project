@@ -12,6 +12,7 @@ import cloudinary
 from marketplace.settings import BASE_DIR
 from marketapp.forms import *
 from marketapp.models import *
+from marketapp.pgp import *
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -55,13 +56,13 @@ def signup(request):
             user.save()
 
             # Send an email to the user on successful sign up
-            """send_mail(
+            send_mail(
                 f"Welcome to Digital Artwork Platform",
-                f"Dear {name},\n\nThank you for registration on dap.com.\n\nDAP",
+                get_pgp_string(f"Dear {name},\n\nThank you for registration on dap.com.\n\nDAP"),
                 settings.EMAIL_HOST_USER,
                 [email,],
                 fail_silently=False,
-            )"""
+            )
             return render(request, "success.html", {"path": request.path})
         else:
             return render(request, "signup.html", {"context": signup_form.errors, "path": request.path})
@@ -324,7 +325,7 @@ def like(request):
         like = LikeModel.objects.create(post_id=post_id, user=user)
         send_mail(
             f"Updates to Your Artwork {like.post.caption}",
-            f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
+            get_pgp_string(f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP"),
             settings.EMAIL_HOST_USER,
             [like.post.user.email,],
             fail_silently=False,
