@@ -9,7 +9,7 @@ The requirements of the project on its hosting platform is shown in Table below.
 |    OS    | Windows 10; MacOS 10.9; Linux 4.0(kernel) | Windows 11; MacOS 13; Linux 5.17(kernel) |
 | Software |                Python 3.8                 |             Python 3.9, 3.10             |
 
-1. Make sure having python libarary \mintinline{md}{virtualenv} installed, or install with \mintinline{sh}{pip install virtualenv}.
+1. Make sure having python libarary `virtualenv` installed, or install with `pip install virtualenv`.
 2. Initialize a new virtualenv and install all dependencies.
    ```sh
    python -m venv env                      # create virtual environment
@@ -21,7 +21,7 @@ The requirements of the project on its hosting platform is shown in Table below.
    python manage.py makemigrations
    python manage.py migrate
    ```
-4. Save environmental variables into a \mintinline{md}{.env} file:
+4. Save environmental variables into a `.env` file:
 
    ```ini
    # Cloudinary api configurations (available after registration),
