@@ -29,14 +29,14 @@ ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
+    'marketapp',
+    'marketplace',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'marketapp',
-    'marketplace',
     'cloudinary',
     'django_extensions',
     'debug_toolbar',

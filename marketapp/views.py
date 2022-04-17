@@ -2,7 +2,7 @@
 import os
 import hashlib
 
-from django.contrib.auth.hashers import check_password, make_password
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.conf import settings
 from django.core.mail import send_mail
@@ -42,13 +42,13 @@ def signup(request):
         signup_form = SignUpForm(request.POST)
         if signup_form.is_valid():
             username = signup_form.cleaned_data["username"]
-            name = signup_form.cleaned_data["name"]
+            name = signup_form.cleaned_data["first_name"]
             email = signup_form.cleaned_data["email"]
             password = signup_form.cleaned_data["password"]
 
-            user = UserModel(
-                name = name,
-                password = make_password(password),
+            user = User.objects.create_user(
+                first_name = name,
+                password = password,
                 email = email,
                 username = username,
             )
@@ -87,12 +87,12 @@ def login(request):
     
     username = form.cleaned_data.get("username")
     password = form.cleaned_data.get("password")
-    user = UserModel.objects.filter(username=username).first()
+    user = User.objects.filter(username=username).first()
     if not user:
         return render(
             request, "login.html", {"context": "Username not registered", "path": request.path}
         )
-    if not check_password(password, user.password):
+    if not user.check_password(password):
         return render(
             request,
             "login.html",
@@ -226,7 +226,7 @@ def transfer(request):
             return redirect('/manage/')
             
         print(f"auth: {user.id == sender_id}, where {user.id}, {sender_id}, {post_id}")
-        sender = UserModel.objects.get(id=sender_id)
+        sender = User.objects.get(id=sender_id)
         post = PostModel.objects.get(id=post_id)
         existed = TransactionModel.objects.filter(post=post, sender=sender, receiver=post.user, completed=False)
         if existed:
@@ -274,7 +274,7 @@ def transact(request):
             request.session['form_message']['text'] = "Error: failed to transact! [no such transaction]"
             if transaction:
                 # transfer the ownership of the post to the receiver
-                transaction.confirmed = True
+                transaction.completed = True
                 transaction.save()
                 post.user = user
                 post.save()
@@ -324,7 +324,7 @@ def like(request):
         like = LikeModel.objects.create(post_id=post_id, user=user)
         send_mail(
             f"Updates to Your Artwork {like.post.caption}",
-            f"Dear {like.post.user.name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
+            f"Dear {like.post.user.first_name},\n\nYour Artwork {like.post.caption}: {like.post.image_url} is liked by buyer {like.user.first_name}: {like.user.email}.\nYou can check it out at dap.com.\n\nDAP",
             settings.EMAIL_HOST_USER,
             [like.post.user.email,],
             fail_silently=False,
@@ -356,8 +356,8 @@ def comment(request):
             # one who posted the comment
             """if comment.user.email != comment.post.user.email:
                 send_mail(
-                    f"New comment from {comment.user.name} on Your Post {comment.post.caption}",
-                    f"Dear {comment.post.user.name}:\n\n{comment.user.name}: {comment_text}\n\nCheck it out at dap.com\n\n DAP",
+                    f"New comment from {comment.user.first_name} on Your Post {comment.post.caption}",
+                    f"Dear {comment.post.user.first_name}:\n\n{comment.user.first_name}: {comment_text}\n\nCheck it out at dap.com\n\n DAP",
                     settings.EMAIL_HOST_USER,
                     [comment.post.user.email],
                     fail_silently=False,
@@ -399,11 +399,11 @@ def upvote(request):
         return redirect("/feed/")
             
 
-def feed_by_user(request, name):
+def feed_by_user(request, username):
     user = check_validation(request)
     if not user:
         return redirect("/login/")
-    usern = UserModel.objects.all().filter(name=name).first()
+    usern = User.objects.all().filter(username=username).first()
     # print(usern)
     posts = PostModel.objects.filter(user=usern).order_by("-created_on")
     for post in posts:
