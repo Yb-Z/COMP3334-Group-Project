@@ -19,7 +19,7 @@ EMAIL_HOST_PASSWORD=<your-mail-host-password>
 2. Create and activate a virtual environment, and then install all dependencies
    ```sh
    python -m venv env
-   source env/bin/activate # (This is just for macos)
+   source env/bin/activate # For windows: run .\env\Scripts\activate
    pip install -r requirements.txt
    ```
 3. Initialize Django

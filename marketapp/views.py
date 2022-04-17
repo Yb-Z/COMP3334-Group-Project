@@ -260,7 +260,7 @@ def transact(request):
         msg = request.session.pop("form_message", {})
         if msg:
             messages.add_message(request, msg.get("level", messages.INFO), msg.get("text", "default message"))
-        transactions = user.as_sender.all() | user.as_receiver.all() # FIX
+        transactions = user.as_sender.all() | user.as_receiver.all()
         return render(request, "transact.html", {"transactions": transactions, "userinfo": user, "path": request.path})
     else:
         form = TransactionForm(request.POST)
