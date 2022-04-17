@@ -10,9 +10,11 @@ def get_pgp_string(s):
             ciphers=[SymmetricKeyAlgorithm.AES256, SymmetricKeyAlgorithm.AES192, SymmetricKeyAlgorithm.AES128],
             compression=[CompressionAlgorithm.ZLIB, CompressionAlgorithm.BZ2, CompressionAlgorithm.ZIP, CompressionAlgorithm.Uncompressed])
 
-    message = pgpy.PGPMessage.new(s)
+    #message = pgpy.PGPMessage.new(s)
 
-    message |= key.sign(message)
+    message = key.sign(s)
+
+    print(str(message))
 
     return str(message)
 
